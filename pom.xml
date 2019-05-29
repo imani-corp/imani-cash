@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    
+    <module>imani-cash-domain</module>
   </modules>
 
 </project>
