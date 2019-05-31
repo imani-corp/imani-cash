@@ -22,6 +22,8 @@ public class PayeeRecord extends AuditableRecord {
     @Column(name="ID", nullable=false)
     private Long id;
 
+
+
     @Column(name="PayeeType", nullable=true, length=10)
     @Enumerated(EnumType.STRING)
     private PayeeTypeE payeeTypeE;

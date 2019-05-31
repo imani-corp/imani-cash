@@ -1,6 +1,7 @@
 package com.imani.cash.domain.user;
 
 import com.imani.cash.domain.AuditableRecord;
+import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import com.imani.cash.domain.payee.PayeeRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,11 +31,8 @@ public class UserRecord extends AuditableRecord {
     @Column(name="LastName", nullable=false, length = 50)
     private String lastName;
 
-    @Column(name="Email", nullable=true, unique = true, length = 50)
-    private String email;
-
-    @Column(name="MobilePhoneNumber", nullable=true, unique = true, length = 50)
-    private String mobilePhoneNumber;
+    @Embedded
+    private EmbeddedContactInfo embeddedContactInfo;
 
     @Column(name="Password", nullable=false, length = 20)
     private String password;
@@ -81,20 +79,12 @@ public class UserRecord extends AuditableRecord {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
+    public EmbeddedContactInfo getEmbeddedContactInfo() {
+        return embeddedContactInfo;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobilePhoneNumber() {
-        return mobilePhoneNumber;
-    }
-
-    public void setMobilePhoneNumber(String mobilePhoneNumber) {
-        this.mobilePhoneNumber = mobilePhoneNumber;
+    public void setEmbeddedContactInfo(EmbeddedContactInfo embeddedContactInfo) {
+        this.embeddedContactInfo = embeddedContactInfo;
     }
 
     public String getPassword() {
@@ -143,8 +133,7 @@ public class UserRecord extends AuditableRecord {
                 .append(id, that.id)
                 .append(firstName, that.firstName)
                 .append(lastName, that.lastName)
-                .append(email, that.email)
-                .append(mobilePhoneNumber, that.mobilePhoneNumber)
+                .append(embeddedContactInfo, that.embeddedContactInfo)
                 .append(password, that.password)
                 .append(payeeRecord, that.payeeRecord)
                 .isEquals();
@@ -156,8 +145,7 @@ public class UserRecord extends AuditableRecord {
                 .append(id)
                 .append(firstName)
                 .append(lastName)
-                .append(email)
-                .append(mobilePhoneNumber)
+                .append(embeddedContactInfo)
                 .append(password)
                 .append(resetPassword)
                 .append(accountLocked)
@@ -171,8 +159,7 @@ public class UserRecord extends AuditableRecord {
                 .append("id", id)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
-                .append("email", email)
-                .append("mobilePhoneNumber", mobilePhoneNumber)
+                .append("embeddedContactInfo", embeddedContactInfo)
                 .append("password", password)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)

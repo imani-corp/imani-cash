@@ -86,7 +86,10 @@
 
     <build>
         <plugins>
-            <!-- Plugin using Hibernate 5 to auto generate ddl's and schema to be used for application -->
+            <!--
+                    Plugin using Hibernate 5 to auto generate ddl's and schema to be used for application.
+                    Schemas will be created under target/generated-resources/ddl/auto
+             -->
             <plugin>
                 <groupId>de.jpdigital</groupId>
                 <artifactId>hibernate52-ddl-maven-plugin</artifactId> <!-- Change to match your Hibernate version -->
