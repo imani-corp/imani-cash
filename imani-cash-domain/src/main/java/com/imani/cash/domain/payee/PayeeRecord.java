@@ -23,6 +23,9 @@ public class PayeeRecord extends AuditableRecord {
     private Long id;
 
 
+    @Embedded
+    private ACHPaymentInfo achPaymentInfo;
+
 
     @Column(name="PayeeType", nullable=true, length=10)
     @Enumerated(EnumType.STRING)
@@ -38,6 +41,14 @@ public class PayeeRecord extends AuditableRecord {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ACHPaymentInfo getAchPaymentInfo() {
+        return achPaymentInfo;
+    }
+
+    public void setAchPaymentInfo(ACHPaymentInfo achPaymentInfo) {
+        this.achPaymentInfo = achPaymentInfo;
     }
 
     public PayeeTypeE getPayeeTypeE() {
@@ -58,6 +69,7 @@ public class PayeeRecord extends AuditableRecord {
 
         return new EqualsBuilder()
                 .append(id, that.id)
+                .append(achPaymentInfo, that.achPaymentInfo)
                 .append(payeeTypeE, that.payeeTypeE)
                 .isEquals();
     }
@@ -66,6 +78,7 @@ public class PayeeRecord extends AuditableRecord {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
+                .append(achPaymentInfo)
                 .append(payeeTypeE)
                 .toHashCode();
     }
@@ -74,6 +87,7 @@ public class PayeeRecord extends AuditableRecord {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
+                .append("achPaymentInfo", achPaymentInfo)
                 .append("payeeTypeE", payeeTypeE)
                 .toString();
     }
