@@ -1,4 +1,4 @@
-package com.imani.cash.domain.payee;
+package com.imani.cash.domain.payment;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,12 +17,17 @@ public class ACHPaymentInfo {
     @Column(name="RoutingNumber", nullable=true)
     public Integer routingNumber;
 
+
     @Column(name="BankAcctNumber", nullable=true)
     public Integer bankAcctNumber;
 
 
     @Column(name="FinancialInstitution", nullable=true, length=100)
     private String financialInstitution;
+
+
+    @Column(name="PaymentGatewayAcctID", nullable=true, length = 100)
+    private String paymentGatewayAcctID;
 
 
     public ACHPaymentInfo() {

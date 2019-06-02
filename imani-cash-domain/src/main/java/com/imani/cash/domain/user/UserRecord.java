@@ -46,7 +46,7 @@ public class UserRecord extends AuditableRecord {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
 
-    // IF specified this indicates that this User can transact on behalf of a specified Payee.
+    // User's with PayeeRecord are also enabled to receive payments through Imani
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PayeeRecordID", nullable = true)
     private PayeeRecord payeeRecord;

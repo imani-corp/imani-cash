@@ -1,6 +1,7 @@
 package com.imani.cash.domain.payee;
 
 import com.imani.cash.domain.AuditableRecord;
+import com.imani.cash.domain.payment.ACHPaymentInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,13 +9,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.*;
 
 /**
- * PayeeRecord is the domain model for an entity or person to whom money is paid.
+ * PayeeRecord is the domain model for an institution, entity or person to whom money is paid.  Payee customers
+ * exists primarily in the IMani Cash system to receive payments from end user clients for various services rendered.
  *
  * @author manyce400
  */
 @Entity
 @Table(name="PayeeRecord")
 public class PayeeRecord extends AuditableRecord {
+
 
 
     @Id

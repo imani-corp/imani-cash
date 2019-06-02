@@ -1,1 +1,2 @@
-# imani-cash
+# imani-cash-domain-service
+This module is built specifically for Service objects that support business logic around domain objects.  These services primarily include the persistence layer and other services.
