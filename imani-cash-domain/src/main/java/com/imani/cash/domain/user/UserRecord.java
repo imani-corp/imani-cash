@@ -1,14 +1,19 @@
 package com.imani.cash.domain.user;
 
+import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.payee.PayeeRecord;
+import com.imani.cash.domain.payment.ACHPaymentInfo;
+import com.imani.cash.domain.property.PropertyInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * UserRecord is the domain model for all users that can access Imani Cash to transact.
@@ -37,19 +42,29 @@ public class UserRecord extends AuditableRecord {
     @Column(name="Password", nullable=false, length = 20)
     private String password;
 
+
     @Column(name="ResetPassword", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean resetPassword;
+
 
     // IF set to true then user is not allowed to access QPalX application
     @Column(name="AccountLocked", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
 
-    // User's with PayeeRecord are also enabled to receive payments through Imani
+
+    // Tracks the Property Address where this user currently resides
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PayeeRecordID", nullable = true)
-    private PayeeRecord payeeRecord;
+    @JoinColumn(name = "PropertyInfoID", nullable = true)
+    private PropertyInfo addressInfo;
+
+
+    // Contains tall the payment Bank accounts that this user can issue and make payments out of.
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ACHPaymentInfo> paymentBankAccounts = new HashSet<>();
+
+
 
     public UserRecord() {
 
@@ -111,12 +126,21 @@ public class UserRecord extends AuditableRecord {
         this.accountLocked = accountLocked;
     }
 
-    public PayeeRecord getPayeeRecord() {
-        return payeeRecord;
+    public PropertyInfo getAddressInfo() {
+        return addressInfo;
     }
 
-    public void setPayeeRecord(PayeeRecord payeeRecord) {
-        this.payeeRecord = payeeRecord;
+    public void setAddressInfo(PropertyInfo addressInfo) {
+        this.addressInfo = addressInfo;
+    }
+
+    public Set<ACHPaymentInfo> getPaymentBankAccounts() {
+        return ImmutableSet.copyOf(paymentBankAccounts);
+    }
+
+    public void addToPaymentBankAccounts(ACHPaymentInfo paymentBankAccount) {
+        Assert.notNull(paymentBankAccount, "paymentBankAccount cannot be null");
+        this.paymentBankAccounts.add(paymentBankAccount);
     }
 
     @Override
@@ -135,7 +159,7 @@ public class UserRecord extends AuditableRecord {
                 .append(lastName, that.lastName)
                 .append(embeddedContactInfo, that.embeddedContactInfo)
                 .append(password, that.password)
-                .append(payeeRecord, that.payeeRecord)
+                .append(addressInfo, that.addressInfo)
                 .isEquals();
     }
 
@@ -149,7 +173,7 @@ public class UserRecord extends AuditableRecord {
                 .append(password)
                 .append(resetPassword)
                 .append(accountLocked)
-                .append(payeeRecord)
+                .append(addressInfo)
                 .toHashCode();
     }
 
@@ -163,8 +187,8 @@ public class UserRecord extends AuditableRecord {
                 .append("password", password)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
-                .append("payeeRecord", payeeRecord)
+                .append("addressInfo", addressInfo)
+                .append("paymentBankAccounts", paymentBankAccounts)
                 .toString();
     }
-
 }

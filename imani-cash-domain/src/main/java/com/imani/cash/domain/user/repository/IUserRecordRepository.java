@@ -1,5 +1,6 @@
-package com.imani.cash.domain.user;
+package com.imani.cash.domain.user.repository;
 
+import com.imani.cash.domain.user.UserRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

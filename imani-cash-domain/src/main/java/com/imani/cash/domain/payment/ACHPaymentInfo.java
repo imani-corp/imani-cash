@@ -4,14 +4,21 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 /**
  * @author manyce400
  */
-@Embeddable
+@Entity
+@Table(name="ACHPaymentInfo")
 public class ACHPaymentInfo {
+
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID", nullable=false)
+    private Long id;
 
 
     @Column(name="RoutingNumber", nullable=true)
@@ -25,9 +32,6 @@ public class ACHPaymentInfo {
     @Column(name="FinancialInstitution", nullable=true, length=100)
     private String financialInstitution;
 
-
-    @Column(name="PaymentGatewayAcctID", nullable=true, length = 100)
-    private String paymentGatewayAcctID;
 
 
     public ACHPaymentInfo() {

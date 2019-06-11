@@ -1,5 +1,6 @@
 package com.imani.cash.domain.geographical;
 
+import com.imani.cash.domain.AuditableRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -7,8 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import javax.persistence.*;
 
 @Entity
-@Table(name="MunicipalAuthority")
-public class MunicipalAuthority {
+@Table(name="City")
+public class City extends AuditableRecord {
 
 
 
@@ -26,16 +27,12 @@ public class MunicipalAuthority {
     private String code;
 
 
-    @Column(name = "TimeZone", nullable = false, length = 3)
-    private String timeZone;
-
-
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "CountryID", nullable = false)
-    private Country country;
+    @JoinColumn(name = "StateID", nullable = false)
+    private State state;
 
 
-    public MunicipalAuthority() {
+    public City() {
 
     }
 
@@ -63,20 +60,12 @@ public class MunicipalAuthority {
         this.code = code;
     }
 
-    public String getTimeZone() {
-        return timeZone;
+    public State getState() {
+        return state;
     }
 
-    public void setTimeZone(String timeZone) {
-        this.timeZone = timeZone;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setState(State state) {
+        this.state = state;
     }
 
     @Override
@@ -85,14 +74,13 @@ public class MunicipalAuthority {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        MunicipalAuthority that = (MunicipalAuthority) o;
+        City that = (City) o;
 
         return new EqualsBuilder()
                 .append(id, that.id)
                 .append(name, that.name)
                 .append(code, that.code)
-                .append(timeZone, that.timeZone)
-                .append(country, that.country)
+                .append(state, that.state)
                 .isEquals();
     }
 
@@ -102,8 +90,7 @@ public class MunicipalAuthority {
                 .append(id)
                 .append(name)
                 .append(code)
-                .append(timeZone)
-                .append(country)
+                .append(state)
                 .toHashCode();
     }
 
@@ -113,8 +100,8 @@ public class MunicipalAuthority {
                 .append("id", id)
                 .append("name", name)
                 .append("code", code)
-                .append("timeZone", timeZone)
-                .append("country", country)
+                .append("state", state)
                 .toString();
     }
+
 }
