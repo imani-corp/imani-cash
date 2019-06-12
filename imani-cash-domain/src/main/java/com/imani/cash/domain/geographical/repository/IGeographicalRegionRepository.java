@@ -2,11 +2,15 @@ package com.imani.cash.domain.geographical.repository;
 
 import com.imani.cash.domain.geographical.GeographicalRegion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author manyce400
  */
 public interface IGeographicalRegionRepository extends JpaRepository<GeographicalRegion, Long> {
 
+
+    @Query("Select  geographicalRegion From GeographicalRegion geographicalRegion Where geographicalRegion.regionCode =?1")
+    public GeographicalRegion findGeographicalRegionByCode(String regionCode);
 
 }
