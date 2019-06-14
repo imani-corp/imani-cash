@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @author manyce400
  */
@@ -30,7 +28,7 @@ public class GeographicalRegionService implements IGeographicalRegionService {
     }
 
 
-    @PostConstruct
+    //@PostConstruct
     public void runPostConstruct() {
         System.out.println("\n\nRunning Post Construct\n\n");
         GeographicalRegion geographicalRegion = iGeographicalRegionRepository.findGeographicalRegionByCode("NA");

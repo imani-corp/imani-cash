@@ -10,6 +10,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 /**
+ * Models direct contact information through electronic means only.
+ *
  * @author manyce400
  */
 @Embeddable

@@ -37,12 +37,17 @@ public class PropertyManager extends AuditableRecord {
 
     // Tracks the Business Bank account for this property manager where payments are to be routed.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACHPaymentInfoID", nullable = true)
+    @JoinColumn(name = "ACHPaymentInfoID", nullable = false)
     private ACHPaymentInfo businessPaymentAccount;
 
 
     @Column(name="PaymentGatewayAcctID", nullable=true, length = 100)
     private String paymentGatewayAcctID;
+
+    // Tracks the Business Property Address.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyInfoID", nullable = true)
+    private PropertyInfo businessAddressInfo;
 
 
     // Contains the portfolio of properties managed by the property management firm
@@ -94,6 +99,14 @@ public class PropertyManager extends AuditableRecord {
         this.paymentGatewayAcctID = paymentGatewayAcctID;
     }
 
+    public PropertyInfo getBusinessAddressInfo() {
+        return businessAddressInfo;
+    }
+
+    public void setBusinessAddressInfo(PropertyInfo businessAddressInfo) {
+        this.businessAddressInfo = businessAddressInfo;
+    }
+
     public Set<PropertyInfo> getPortfolio() {
         return ImmutableSet.copyOf(portfolio);
     }
@@ -117,6 +130,7 @@ public class PropertyManager extends AuditableRecord {
                 .append(embeddedContactInfo, that.embeddedContactInfo)
                 .append(businessPaymentAccount, that.businessPaymentAccount)
                 .append(paymentGatewayAcctID, that.paymentGatewayAcctID)
+                .append(businessAddressInfo, that.businessAddressInfo)
                 .isEquals();
     }
 
@@ -128,6 +142,7 @@ public class PropertyManager extends AuditableRecord {
                 .append(embeddedContactInfo)
                 .append(businessPaymentAccount)
                 .append(paymentGatewayAcctID)
+                .append(businessAddressInfo)
                 .toHashCode();
     }
 
@@ -139,7 +154,9 @@ public class PropertyManager extends AuditableRecord {
                 .append("embeddedContactInfo", embeddedContactInfo)
                 .append("businessPaymentAccount", businessPaymentAccount)
                 .append("paymentGatewayAcctID", paymentGatewayAcctID)
+                .append("businessAddressInfo", businessAddressInfo)
                 .append("portfolio", portfolio)
                 .toString();
     }
+    
 }

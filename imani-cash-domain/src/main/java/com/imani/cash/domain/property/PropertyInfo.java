@@ -37,17 +37,17 @@ public class PropertyInfo extends AuditableRecord {
 
 
     // Tax Block for the building
-    @Column(name="Block", nullable=false, length = 30)
+    @Column(name="Block", nullable=true, length = 30)
     private String block;
 
 
     // Tax lot for the building.
-    @Column(name="Lot", nullable=false, length = 30)
+    @Column(name="Lot", nullable=true, length = 30)
     private String lot;
 
 
     // Buliding Identification Number is a unique number used to identify the building by City
-    @Column(name="BIN", nullable=false, length=7)
+    @Column(name="BIN", nullable=true, length=7)
     private Integer buildingIdentificationNumber;
 
 
