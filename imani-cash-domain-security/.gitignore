@@ -1,0 +1,9 @@
+#  IntelliJ Idea files to ignore
+.idea
+*.iml
+
+# Build and target directory ignore
+target
+
+# Log files to ignore
+/log/*

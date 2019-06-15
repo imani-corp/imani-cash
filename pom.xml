@@ -17,6 +17,7 @@
     <module>imani-cash-domain</module>
     <module>imani-cash-domain-service</module>
     <module>imani-cash-gateway-api</module>
+      <module>imani-cash-domain-security</module>
   </modules>
 
 </project>

@@ -5,9 +5,6 @@ import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
@@ -43,23 +40,9 @@ public class RentalPaymentHistory {
     private ACHPaymentInfo paymentBankAccount;
 
 
-    // Date the payment was made on
-    @Column(name = "PaymentDate", nullable = false, updatable = false)
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @CreatedDate
-    private DateTime paymentDate;
-
-
-    // Date the payment actually posted against the Property Managers Receivable account.
-    @Column(name = "PaymentPostDate", nullable = true, updatable = false)
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @CreatedDate
-    private DateTime paymentPostDate;
-
-
-    @Column(name="PropertyTypeE", nullable=false, length=20)
-    @Enumerated(EnumType.STRING)
-    private PaymentStatusE paymentStatusE;
+    // Information about the payment made.
+    @Embedded
+    private EmbeddedPayment embeddedPayment;
 
     public RentalPaymentHistory() {
 
@@ -97,28 +80,12 @@ public class RentalPaymentHistory {
         this.paymentBankAccount = paymentBankAccount;
     }
 
-    public DateTime getPaymentDate() {
-        return paymentDate;
+    public EmbeddedPayment getEmbeddedPayment() {
+        return embeddedPayment;
     }
 
-    public void setPaymentDate(DateTime paymentDate) {
-        this.paymentDate = paymentDate;
-    }
-
-    public DateTime getPaymentPostDate() {
-        return paymentPostDate;
-    }
-
-    public void setPaymentPostDate(DateTime paymentPostDate) {
-        this.paymentPostDate = paymentPostDate;
-    }
-
-    public PaymentStatusE getPaymentStatusE() {
-        return paymentStatusE;
-    }
-
-    public void setPaymentStatusE(PaymentStatusE paymentStatusE) {
-        this.paymentStatusE = paymentStatusE;
+    public void setEmbeddedPayment(EmbeddedPayment embeddedPayment) {
+        this.embeddedPayment = embeddedPayment;
     }
 
     @Override
@@ -134,9 +101,7 @@ public class RentalPaymentHistory {
                 .append(userRecord, that.userRecord)
                 .append(propertyManager, that.propertyManager)
                 .append(paymentBankAccount, that.paymentBankAccount)
-                .append(paymentDate, that.paymentDate)
-                .append(paymentPostDate, that.paymentPostDate)
-                .append(paymentStatusE, that.paymentStatusE)
+                .append(embeddedPayment, that.embeddedPayment)
                 .isEquals();
     }
 
@@ -147,9 +112,7 @@ public class RentalPaymentHistory {
                 .append(userRecord)
                 .append(propertyManager)
                 .append(paymentBankAccount)
-                .append(paymentDate)
-                .append(paymentPostDate)
-                .append(paymentStatusE)
+                .append(embeddedPayment)
                 .toHashCode();
     }
 
@@ -160,10 +123,7 @@ public class RentalPaymentHistory {
                 .append("userRecord", userRecord)
                 .append("propertyManager", propertyManager)
                 .append("paymentBankAccount", paymentBankAccount)
-                .append("paymentDate", paymentDate)
-                .append("paymentPostDate", paymentPostDate)
-                .append("paymentStatusE", paymentStatusE)
+                .append("embeddedPayment", embeddedPayment)
                 .toString();
     }
-
 }
