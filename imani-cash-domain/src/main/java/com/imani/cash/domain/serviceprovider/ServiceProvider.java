@@ -2,7 +2,6 @@ package com.imani.cash.domain.serviceprovider;
 
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.payment.ACHPaymentInfo;
 import com.imani.cash.domain.property.PropertyInfo;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -43,13 +42,6 @@ public class ServiceProvider extends AuditableRecord {
     // Contact information for this ServiceProvider
     @Embedded
     private EmbeddedContactInfo providerContactInfo;
-
-
-    // Tracks the Business Bank account for this service provider
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACHPaymentInfoID", nullable = false)
-    private ACHPaymentInfo providerPaymentAccount;
-
 
 
     // Tracks a registered IMani user that is associated with this provider.
@@ -97,14 +89,6 @@ public class ServiceProvider extends AuditableRecord {
         this.providerContactInfo = providerContactInfo;
     }
 
-    public ACHPaymentInfo getProviderPaymentAccount() {
-        return providerPaymentAccount;
-    }
-
-    public void setProviderPaymentAccount(ACHPaymentInfo providerPaymentAccount) {
-        this.providerPaymentAccount = providerPaymentAccount;
-    }
-
     public UserRecord getAssociatedUserRecord() {
         return associatedUserRecord;
     }
@@ -134,7 +118,6 @@ public class ServiceProvider extends AuditableRecord {
                 .append(providerName, that.providerName)
                 .append(embeddedProviderLicense, that.embeddedProviderLicense)
                 .append(providerContactInfo, that.providerContactInfo)
-                .append(providerPaymentAccount, that.providerPaymentAccount)
                 .append(associatedUserRecord, that.associatedUserRecord)
                 .append(providerAddressInfo, that.providerAddressInfo)
                 .isEquals();
@@ -147,7 +130,6 @@ public class ServiceProvider extends AuditableRecord {
                 .append(providerName)
                 .append(embeddedProviderLicense)
                 .append(providerContactInfo)
-                .append(providerPaymentAccount)
                 .append(associatedUserRecord)
                 .append(providerAddressInfo)
                 .toHashCode();
@@ -160,7 +142,6 @@ public class ServiceProvider extends AuditableRecord {
                 .append("providerName", providerName)
                 .append("embeddedProviderLicense", embeddedProviderLicense)
                 .append("providerContactInfo", providerContactInfo)
-                .append("providerPaymentAccount", providerPaymentAccount)
                 .append("associatedUserRecord", associatedUserRecord)
                 .append("providerAddressInfo", providerAddressInfo)
                 .toString();

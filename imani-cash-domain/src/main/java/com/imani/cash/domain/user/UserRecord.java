@@ -1,19 +1,14 @@
 package com.imani.cash.domain.user;
 
-import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.payment.ACHPaymentInfo;
 import com.imani.cash.domain.property.PropertyInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
-import org.springframework.util.Assert;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * UserRecord is the domain model for all users that can access Imani Cash to transact.
@@ -58,11 +53,6 @@ public class UserRecord extends AuditableRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyInfoID", nullable = true)
     private PropertyInfo addressInfo;
-
-
-    // Contains tall the payment Bank accounts that this user can issue and make payments out of.
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ACHPaymentInfo> paymentBankAccounts = new HashSet<>();
 
 
 
@@ -134,14 +124,6 @@ public class UserRecord extends AuditableRecord {
         this.addressInfo = addressInfo;
     }
 
-    public Set<ACHPaymentInfo> getPaymentBankAccounts() {
-        return ImmutableSet.copyOf(paymentBankAccounts);
-    }
-
-    public void addToPaymentBankAccounts(ACHPaymentInfo paymentBankAccount) {
-        Assert.notNull(paymentBankAccount, "paymentBankAccount cannot be null");
-        this.paymentBankAccounts.add(paymentBankAccount);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -188,7 +170,6 @@ public class UserRecord extends AuditableRecord {
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
                 .append("addressInfo", addressInfo)
-                .append("paymentBankAccounts", paymentBankAccounts)
                 .toString();
     }
 }

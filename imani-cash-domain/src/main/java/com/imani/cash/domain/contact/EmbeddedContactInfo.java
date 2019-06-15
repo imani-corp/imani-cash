@@ -18,6 +18,7 @@ import javax.persistence.Enumerated;
 public class EmbeddedContactInfo implements IContactInfo {
 
 
+
     @Column(name="MobilePhone", nullable=true, length=50)
     private Long mobilePhone;
 
