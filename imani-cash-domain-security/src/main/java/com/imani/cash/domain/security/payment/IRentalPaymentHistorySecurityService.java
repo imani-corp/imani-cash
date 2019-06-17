@@ -16,6 +16,6 @@ public interface IRentalPaymentHistorySecurityService {
      * @param embeddedPayment
      * @return <code>true</code> IF this is a valid payment.
      */
-    public boolean validatePayment(UserRecord userRecord, EmbeddedPayment embeddedPayment);
+    public PaymentSecurityValidation validatePayment(UserRecord userRecord, EmbeddedPayment embeddedPayment);
 
 }

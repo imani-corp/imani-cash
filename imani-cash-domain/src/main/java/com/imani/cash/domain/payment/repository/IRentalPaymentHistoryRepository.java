@@ -1,5 +1,6 @@
 package com.imani.cash.domain.payment.repository;
 
+import com.imani.cash.domain.payment.PaymentStatusE;
 import com.imani.cash.domain.payment.RentalPaymentHistory;
 import com.imani.cash.domain.user.UserRecord;
 import org.joda.time.DateTime;
@@ -17,5 +18,8 @@ public interface IRentalPaymentHistoryRepository extends JpaRepository<RentalPay
 
     @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.paymentDate >=?2")
     public List<RentalPaymentHistory> findUserRentalPaymentHistoryByDate(UserRecord userRecord, DateTime paymentDate);
+
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE >=?2 and rentalPaymentHistory.paymentDate >=?3")
+    public List<RentalPaymentHistory> findUserRentalPaymentHistoryByStatusAndDate(UserRecord userRecord, PaymentStatusE paymentStatusE, DateTime paymentDate);
 
 }
