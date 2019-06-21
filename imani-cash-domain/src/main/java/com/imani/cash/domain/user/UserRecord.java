@@ -2,7 +2,7 @@ package com.imani.cash.domain.user;
 
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.property.PropertyInfo;
+import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -52,7 +52,7 @@ public class UserRecord extends AuditableRecord {
     // Tracks the Property Address where this user currently resides
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyInfoID", nullable = true)
-    private PropertyInfo addressInfo;
+    private Property addressInfo;
 
 
 
@@ -116,11 +116,11 @@ public class UserRecord extends AuditableRecord {
         this.accountLocked = accountLocked;
     }
 
-    public PropertyInfo getAddressInfo() {
+    public Property getAddressInfo() {
         return addressInfo;
     }
 
-    public void setAddressInfo(PropertyInfo addressInfo) {
+    public void setAddressInfo(Property addressInfo) {
         this.addressInfo = addressInfo;
     }
 

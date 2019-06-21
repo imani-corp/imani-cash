@@ -2,7 +2,7 @@ package com.imani.cash.domain.serviceprovider;
 
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.property.PropertyInfo;
+import com.imani.cash.domain.property.rental.Property;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -54,7 +54,7 @@ public class ServiceProvider extends AuditableRecord {
     // Tracks the Business Property Address.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyInfoID", nullable = true)
-    private PropertyInfo providerAddressInfo;
+    private Property providerAddressInfo;
 
 
     public Long getId() {
@@ -97,11 +97,11 @@ public class ServiceProvider extends AuditableRecord {
         this.associatedUserRecord = associatedUserRecord;
     }
 
-    public PropertyInfo getProviderAddressInfo() {
+    public Property getProviderAddressInfo() {
         return providerAddressInfo;
     }
 
-    public void setProviderAddressInfo(PropertyInfo providerAddressInfo) {
+    public void setProviderAddressInfo(Property providerAddressInfo) {
         this.providerAddressInfo = providerAddressInfo;
     }
 

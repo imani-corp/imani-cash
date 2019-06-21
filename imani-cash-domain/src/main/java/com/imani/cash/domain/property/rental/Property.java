@@ -1,12 +1,18 @@
-package com.imani.cash.domain.property;
+package com.imani.cash.domain.property.rental;
 
+import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.geographical.Borough;
+import com.imani.cash.domain.property.PropertyManager;
+import com.imani.cash.domain.property.PropertyTypeE;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Models all data to uniquely identify a property by attributes captured at the municipality level.
@@ -18,8 +24,8 @@ import javax.persistence.*;
  * @author manyce400
  */
 @Entity
-@Table(name="PropertyInfo")
-public class PropertyInfo extends AuditableRecord {
+@Table(name="Property")
+public class Property extends AuditableRecord {
 
 
     @Id
@@ -77,7 +83,12 @@ public class PropertyInfo extends AuditableRecord {
     private PropertyManager propertyManager;
 
 
-    public PropertyInfo() {
+    // Contains collection of all Floors that are in this property
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "property")
+    private Set<Floor> floors = new HashSet<>();
+
+
+    public Property() {
 
     }
 
@@ -177,13 +188,22 @@ public class PropertyInfo extends AuditableRecord {
         this.propertyManager = propertyManager;
     }
 
+    public Set<Floor> getFloors() {
+        return ImmutableSet.copyOf(floors);
+    }
+
+    public void addToFloors(Floor floor) {
+        Assert.notNull(floor, "floor cannot be null");
+        floors.add(floor);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        PropertyInfo that = (PropertyInfo) o;
+        Property that = (Property) o;
 
         return new EqualsBuilder()
                 .append(id, that.id)

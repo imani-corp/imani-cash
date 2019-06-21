@@ -3,6 +3,7 @@ package com.imani.cash.domain.property;
 import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
+import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -40,12 +41,12 @@ public class PropertyManager extends AuditableRecord {
     // Tracks the Business Property Address.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyInfoID", nullable = true)
-    private PropertyInfo businessAddressInfo;
+    private Property businessAddressInfo;
 
 
     // Contains the portfolio of properties managed by the property management firm
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "propertyManager")
-    private Set<PropertyInfo> portfolio = new HashSet<>();
+    private Set<Property> portfolio = new HashSet<>();
 
 
     public PropertyManager() {
@@ -84,21 +85,21 @@ public class PropertyManager extends AuditableRecord {
         this.paymentGatewayAcctID = paymentGatewayAcctID;
     }
 
-    public PropertyInfo getBusinessAddressInfo() {
+    public Property getBusinessAddressInfo() {
         return businessAddressInfo;
     }
 
-    public void setBusinessAddressInfo(PropertyInfo businessAddressInfo) {
+    public void setBusinessAddressInfo(Property businessAddressInfo) {
         this.businessAddressInfo = businessAddressInfo;
     }
 
-    public Set<PropertyInfo> getPortfolio() {
+    public Set<Property> getPortfolio() {
         return ImmutableSet.copyOf(portfolio);
     }
 
-    public void addToPortfolio(PropertyInfo propertyInfo) {
-        Assert.notNull(propertyInfo, "propertyInfo cannot be null");
-        this.portfolio.add(propertyInfo);
+    public void addToPortfolio(Property property) {
+        Assert.notNull(property, "property cannot be null");
+        this.portfolio.add(property);
     }
 
     @Override
@@ -137,7 +138,6 @@ public class PropertyManager extends AuditableRecord {
                 .append("embeddedContactInfo", embeddedContactInfo)
                 .append("paymentGatewayAcctID", paymentGatewayAcctID)
                 .append("businessAddressInfo", businessAddressInfo)
-                .append("portfolio", portfolio)
                 .toString();
     }
     
