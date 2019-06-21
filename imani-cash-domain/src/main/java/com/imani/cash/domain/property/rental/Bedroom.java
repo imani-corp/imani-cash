@@ -29,7 +29,7 @@ public class Bedroom extends AuditableRecord {
 
 
     // Identifies this ACH Bank Account as the primary account
-    @Column(name="IsPrimary", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Column(name="IsMasterBedroom", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean isMasterBedroom;
 

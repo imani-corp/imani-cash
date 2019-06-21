@@ -5,6 +5,7 @@ import com.imani.cash.domain.AuditableRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -28,6 +29,11 @@ public class Apartment extends AuditableRecord {
 
     @Column(name="ApartmentNumber", nullable=false, length = 30)
     private String apartmentNumber;
+
+
+    @Column(name="IsRented", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean isRented;
 
 
     // Tracks the floor that this apartment is on
@@ -61,6 +67,14 @@ public class Apartment extends AuditableRecord {
         this.apartmentNumber = apartmentNumber;
     }
 
+    public boolean isRented() {
+        return isRented;
+    }
+
+    public void setRented(boolean rented) {
+        isRented = rented;
+    }
+
     public Floor getFloor() {
         return floor;
     }
@@ -84,12 +98,13 @@ public class Apartment extends AuditableRecord {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Apartment that = (Apartment) o;
+        Apartment apartment = (Apartment) o;
 
         return new EqualsBuilder()
-                .append(id, that.id)
-                .append(apartmentNumber, that.apartmentNumber)
-                .append(floor, that.floor)
+                .append(isRented, apartment.isRented)
+                .append(id, apartment.id)
+                .append(apartmentNumber, apartment.apartmentNumber)
+                .append(floor, apartment.floor)
                 .isEquals();
     }
 
@@ -98,6 +113,7 @@ public class Apartment extends AuditableRecord {
         return new HashCodeBuilder(17, 37)
                 .append(id)
                 .append(apartmentNumber)
+                .append(isRented)
                 .append(floor)
                 .toHashCode();
     }
@@ -107,6 +123,7 @@ public class Apartment extends AuditableRecord {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("apartmentNumber", apartmentNumber)
+                .append("isRented", isRented)
                 .append("floor", floor)
                 .toString();
     }
