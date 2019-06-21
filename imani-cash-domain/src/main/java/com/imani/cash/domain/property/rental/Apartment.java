@@ -2,6 +2,7 @@ package com.imani.cash.domain.property.rental;
 
 import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
+import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -40,6 +41,12 @@ public class Apartment extends AuditableRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FloorID", nullable = true)
     private Floor floor;
+
+
+    // Tracks the User currently renting this appartment
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RentedByUserID", nullable = true)
+    private UserRecord rentedByUser;
 
 
     // Contains collection of all bedrooms in this apartment
@@ -83,6 +90,14 @@ public class Apartment extends AuditableRecord {
         this.floor = floor;
     }
 
+    public UserRecord getRentedByUser() {
+        return rentedByUser;
+    }
+
+    public void setRentedByUser(UserRecord rentedByUser) {
+        this.rentedByUser = rentedByUser;
+    }
+
     public Set<Bedroom> getBedrooms() {
         return ImmutableSet.copyOf(bedrooms);
     }
@@ -105,6 +120,7 @@ public class Apartment extends AuditableRecord {
                 .append(id, apartment.id)
                 .append(apartmentNumber, apartment.apartmentNumber)
                 .append(floor, apartment.floor)
+                .append(rentedByUser, apartment.rentedByUser)
                 .isEquals();
     }
 
@@ -115,6 +131,7 @@ public class Apartment extends AuditableRecord {
                 .append(apartmentNumber)
                 .append(isRented)
                 .append(floor)
+                .append(rentedByUser)
                 .toHashCode();
     }
 
@@ -125,6 +142,7 @@ public class Apartment extends AuditableRecord {
                 .append("apartmentNumber", apartmentNumber)
                 .append("isRented", isRented)
                 .append("floor", floor)
+                .append("rentedByUser", rentedByUser)
                 .toString();
     }
 }
