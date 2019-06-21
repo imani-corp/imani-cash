@@ -2,7 +2,6 @@ package com.imani.cash.domain.user;
 
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -48,11 +47,6 @@ public class UserRecord extends AuditableRecord {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
 
-
-    // Tracks the Property Address where this user currently resides
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PropertyInfoID", nullable = true)
-    private Property addressInfo;
 
 
 
@@ -116,14 +110,6 @@ public class UserRecord extends AuditableRecord {
         this.accountLocked = accountLocked;
     }
 
-    public Property getAddressInfo() {
-        return addressInfo;
-    }
-
-    public void setAddressInfo(Property addressInfo) {
-        this.addressInfo = addressInfo;
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -141,7 +127,6 @@ public class UserRecord extends AuditableRecord {
                 .append(lastName, that.lastName)
                 .append(embeddedContactInfo, that.embeddedContactInfo)
                 .append(password, that.password)
-                .append(addressInfo, that.addressInfo)
                 .isEquals();
     }
 
@@ -155,7 +140,6 @@ public class UserRecord extends AuditableRecord {
                 .append(password)
                 .append(resetPassword)
                 .append(accountLocked)
-                .append(addressInfo)
                 .toHashCode();
     }
 
@@ -169,7 +153,6 @@ public class UserRecord extends AuditableRecord {
                 .append("password", password)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
-                .append("addressInfo", addressInfo)
                 .toString();
     }
 }

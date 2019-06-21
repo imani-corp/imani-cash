@@ -19,6 +19,8 @@ public class GeographicalRegionService implements IGeographicalRegionService {
     @Autowired
     private IGeographicalRegionRepository iGeographicalRegionRepository;
 
+
+
     public static final String SPRING_BEAN = "com.imani.cash.domain.service.geographical.GeographicalRegionService";
 
 
