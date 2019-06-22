@@ -78,7 +78,7 @@ public class PropertyRentalService implements IPropertyRentalService {
                 .apartment(apartment)
                 .rentalTransactionTypeE(RentalTransactionTypeE.Rental)
                 .transactionDate(DateTime.now())
-                .userRecord(tenant)
+                .tenantUserRecord(tenant)
                 .build();
         return rentalTransaction;
     }
@@ -91,7 +91,7 @@ public class PropertyRentalService implements IPropertyRentalService {
                 .transactionMessage("Apartment is currently rented")
                 .rentalTransactionTypeE(RentalTransactionTypeE.Rental)
                 .transactionDate(DateTime.now())
-                .userRecord(tenant)
+                .tenantUserRecord(tenant)
                 .build();
         return rentalTransaction;
     }

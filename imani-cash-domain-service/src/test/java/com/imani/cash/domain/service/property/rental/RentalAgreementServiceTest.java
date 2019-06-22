@@ -83,6 +83,16 @@ public class RentalAgreementServiceTest {
                 .propertyManagerAcceptedAgreement(true)
                 .build();
         Assert.assertTrue(rentalAgreementService.isRentalAgreementInForce(rentalAgreement));
+
+        rentalAgreement = RentalAgreement.builder()
+                .agreementDocument("C://///")
+                .effectiveDate(DateTime.now())
+                .propertyOwnerAcceptedAgreement(true)
+                .propertyOwnerAcceptanceDate(DateTime.now())
+                .tenantAcceptanceDate(DateTime.now())
+                .tenantAcceptedAgreement(true)
+                .build();
+        Assert.assertTrue(rentalAgreementService.isRentalAgreementInForce(rentalAgreement));
     }
 
 

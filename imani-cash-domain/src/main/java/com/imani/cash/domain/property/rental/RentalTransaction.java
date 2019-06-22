@@ -1,5 +1,7 @@
 package com.imani.cash.domain.property.rental;
 
+import com.imani.cash.domain.property.PropertyManager;
+import com.imani.cash.domain.property.PropertyOwner;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -9,7 +11,6 @@ import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.util.Optional;
 
 /**
  * @author manyce400
@@ -44,9 +45,22 @@ public class RentalTransaction {
     private Apartment apartment;
 
 
+    // Tracked to determine the tenant user involved in this transaction
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserRecordID", nullable = true)
-    private UserRecord tenant;
+    @JoinColumn(name = "TenantUserRecordID", nullable = false)
+    private UserRecord tenantUserRecord;
+
+
+    // Tracked to indicate that transaction involved a Property Manager
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyManagerID", nullable = true)
+    private PropertyManager propertyManager;
+
+
+    // Tracked to indicate that transaction involved a Property Owner
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyOwnerID", nullable = true)
+    private PropertyOwner propertyOwner;
 
 
     @Column(name = "TransactionDate", nullable = false)
@@ -76,8 +90,8 @@ public class RentalTransaction {
         this.transactionSuccessful = transactionSuccessful;
     }
 
-    public Optional<String> getTransationMessage() {
-        return transactionMessage == null ? Optional.empty() : Optional.of(transactionMessage);
+    public String getTransactionMessage() {
+        return transactionMessage;
     }
 
     public void setTransactionMessage(String transactionMessage) {
@@ -100,12 +114,28 @@ public class RentalTransaction {
         this.apartment = apartment;
     }
 
-    public UserRecord getTenant() {
-        return tenant;
+    public UserRecord getTenantUserRecord() {
+        return tenantUserRecord;
     }
 
-    public void setTenant(UserRecord tenant) {
-        this.tenant = tenant;
+    public void setTenantUserRecord(UserRecord tenantUserRecord) {
+        this.tenantUserRecord = tenantUserRecord;
+    }
+
+    public PropertyManager getPropertyManager() {
+        return propertyManager;
+    }
+
+    public void setPropertyManager(PropertyManager propertyManager) {
+        this.propertyManager = propertyManager;
+    }
+
+    public PropertyOwner getPropertyOwner() {
+        return propertyOwner;
+    }
+
+    public void setPropertyOwner(PropertyOwner propertyOwner) {
+        this.propertyOwner = propertyOwner;
     }
 
     public DateTime getTransactionDate() {
@@ -130,7 +160,9 @@ public class RentalTransaction {
                 .append(transactionMessage, that.transactionMessage)
                 .append(rentalTransactionTypeE, that.rentalTransactionTypeE)
                 .append(apartment, that.apartment)
-                .append(tenant, that.tenant)
+                .append(tenantUserRecord, that.tenantUserRecord)
+                .append(propertyManager, that.propertyManager)
+                .append(propertyOwner, that.propertyOwner)
                 .append(transactionDate, that.transactionDate)
                 .isEquals();
     }
@@ -143,7 +175,9 @@ public class RentalTransaction {
                 .append(transactionMessage)
                 .append(rentalTransactionTypeE)
                 .append(apartment)
-                .append(tenant)
+                .append(tenantUserRecord)
+                .append(propertyManager)
+                .append(propertyOwner)
                 .append(transactionDate)
                 .toHashCode();
     }
@@ -156,10 +190,13 @@ public class RentalTransaction {
                 .append("transactionMessage", transactionMessage)
                 .append("rentalTransactionTypeE", rentalTransactionTypeE)
                 .append("apartment", apartment)
-                .append("tenant", tenant)
+                .append("tenantUserRecord", tenantUserRecord)
+                .append("propertyManager", propertyManager)
+                .append("propertyOwner", propertyOwner)
                 .append("transactionDate", transactionDate)
                 .toString();
     }
+
 
 
     public static final Builder builder() {
@@ -191,8 +228,18 @@ public class RentalTransaction {
             return this;
         }
 
-        public Builder userRecord(UserRecord tenant) {
-            rentalTransaction.tenant = tenant;
+        public Builder tenantUserRecord(UserRecord tenantUserRecord) {
+            rentalTransaction.tenantUserRecord = tenantUserRecord;
+            return this;
+        }
+
+        public Builder propertyManager(PropertyManager propertyManager) {
+            rentalTransaction.propertyManager = propertyManager;
+            return this;
+        }
+
+        public Builder propertyOwner(PropertyOwner propertyOwner) {
+            rentalTransaction.propertyOwner = propertyOwner;
             return this;
         }
 

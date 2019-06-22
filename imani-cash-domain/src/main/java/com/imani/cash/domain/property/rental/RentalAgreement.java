@@ -1,6 +1,7 @@
 package com.imani.cash.domain.property.rental;
 
 import com.imani.cash.domain.property.PropertyManager;
+import com.imani.cash.domain.property.PropertyOwner;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -53,6 +54,18 @@ public class RentalAgreement {
     private DateTime propertyManagerAcceptanceDate;
 
 
+    // Tracks if property manager has accepted agreement
+    @Column(name="PropertyOwnerAcceptedAgreement", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean propertyOwnerAcceptedAgreement;
+
+
+    @Column(name = "PropertyOwnerAcceptanceDate", nullable = true)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @CreatedDate
+    private DateTime propertyOwnerAcceptanceDate;
+
+
     @Column(name = "EffectiveDate", nullable = false, updatable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
@@ -71,10 +84,16 @@ public class RentalAgreement {
     private UserRecord rentedByUser;
 
 
-    // Tracks the PropertyManager that established the agreement.
+    // Tracks the optional PropertyManager that established the agreement.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyManagerID", nullable = true)
     private PropertyManager propertyManager;
+
+
+    // Tracks optional PropertyOwner that established the agreement.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyOwnerID", nullable = true)
+    private PropertyOwner propertyOwner;
 
 
     public RentalAgreement() {
@@ -129,6 +148,22 @@ public class RentalAgreement {
         this.propertyManagerAcceptanceDate = propertyManagerAcceptanceDate;
     }
 
+    public boolean isPropertyOwnerAcceptedAgreement() {
+        return propertyOwnerAcceptedAgreement;
+    }
+
+    public void setPropertyOwnerAcceptedAgreement(boolean propertyOwnerAcceptedAgreement) {
+        this.propertyOwnerAcceptedAgreement = propertyOwnerAcceptedAgreement;
+    }
+
+    public DateTime getPropertyOwnerAcceptanceDate() {
+        return propertyOwnerAcceptanceDate;
+    }
+
+    public void setPropertyOwnerAcceptanceDate(DateTime propertyOwnerAcceptanceDate) {
+        this.propertyOwnerAcceptanceDate = propertyOwnerAcceptanceDate;
+    }
+
     public DateTime getEffectiveDate() {
         return effectiveDate;
     }
@@ -161,6 +196,14 @@ public class RentalAgreement {
         this.propertyManager = propertyManager;
     }
 
+    public PropertyOwner getPropertyOwner() {
+        return propertyOwner;
+    }
+
+    public void setPropertyOwner(PropertyOwner propertyOwner) {
+        this.propertyOwner = propertyOwner;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -172,14 +215,17 @@ public class RentalAgreement {
         return new EqualsBuilder()
                 .append(tenantAcceptedAgreement, that.tenantAcceptedAgreement)
                 .append(propertyManagerAcceptedAgreement, that.propertyManagerAcceptedAgreement)
+                .append(propertyOwnerAcceptedAgreement, that.propertyOwnerAcceptedAgreement)
                 .append(id, that.id)
                 .append(agreementDocument, that.agreementDocument)
                 .append(tenantAcceptanceDate, that.tenantAcceptanceDate)
                 .append(propertyManagerAcceptanceDate, that.propertyManagerAcceptanceDate)
+                .append(propertyOwnerAcceptanceDate, that.propertyOwnerAcceptanceDate)
                 .append(effectiveDate, that.effectiveDate)
                 .append(terminationDate, that.terminationDate)
                 .append(rentedByUser, that.rentedByUser)
                 .append(propertyManager, that.propertyManager)
+                .append(propertyOwner, that.propertyOwner)
                 .isEquals();
     }
 
@@ -192,10 +238,13 @@ public class RentalAgreement {
                 .append(tenantAcceptanceDate)
                 .append(propertyManagerAcceptedAgreement)
                 .append(propertyManagerAcceptanceDate)
+                .append(propertyOwnerAcceptedAgreement)
+                .append(propertyOwnerAcceptanceDate)
                 .append(effectiveDate)
                 .append(terminationDate)
                 .append(rentedByUser)
                 .append(propertyManager)
+                .append(propertyOwner)
                 .toHashCode();
     }
 
@@ -208,13 +257,15 @@ public class RentalAgreement {
                 .append("tenantAcceptanceDate", tenantAcceptanceDate)
                 .append("propertyManagerAcceptedAgreement", propertyManagerAcceptedAgreement)
                 .append("propertyManagerAcceptanceDate", propertyManagerAcceptanceDate)
+                .append("propertyOwnerAcceptedAgreement", propertyOwnerAcceptedAgreement)
+                .append("propertyOwnerAcceptanceDate", propertyOwnerAcceptanceDate)
                 .append("effectiveDate", effectiveDate)
                 .append("terminationDate", terminationDate)
                 .append("rentedByUser", rentedByUser)
                 .append("propertyManager", propertyManager)
+                .append("propertyOwner", propertyOwner)
                 .toString();
     }
-
 
     public static Builder builder() {
         return new Builder();
@@ -250,6 +301,16 @@ public class RentalAgreement {
             return this;
         }
 
+        public Builder propertyOwnerAcceptedAgreement(boolean propertyOwnerAcceptedAgreement) {
+            rentalAgreement.propertyOwnerAcceptedAgreement = propertyOwnerAcceptedAgreement;
+            return this;
+        }
+
+        public Builder propertyOwnerAcceptanceDate(DateTime propertyOwnerAcceptanceDate) {
+            rentalAgreement.propertyOwnerAcceptanceDate = propertyOwnerAcceptanceDate;
+            return this;
+        }
+
         public Builder effectiveDate(DateTime effectiveDate) {
             rentalAgreement.effectiveDate = effectiveDate;
             return this;
@@ -267,6 +328,11 @@ public class RentalAgreement {
 
         public Builder propertyManager(PropertyManager propertyManager) {
             rentalAgreement.propertyManager = propertyManager;
+            return this;
+        }
+
+        public Builder propertyOwner(PropertyOwner propertyOwner) {
+            rentalAgreement.propertyOwner = propertyOwner;
             return this;
         }
 

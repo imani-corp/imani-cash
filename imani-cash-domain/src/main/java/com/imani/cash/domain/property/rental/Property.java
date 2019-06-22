@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.geographical.Borough;
 import com.imani.cash.domain.property.PropertyManager;
+import com.imani.cash.domain.property.PropertyOwner;
 import com.imani.cash.domain.property.PropertyTypeE;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -81,6 +82,12 @@ public class Property extends AuditableRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyManagerID", nullable = true)
     private PropertyManager propertyManager;
+
+
+    // Maps to optional PropertyOwner individual that actually owns the property.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyOwnerID", nullable = true)
+    private PropertyOwner propertyOwner;
 
 
     // Contains collection of all Floors that are in this property

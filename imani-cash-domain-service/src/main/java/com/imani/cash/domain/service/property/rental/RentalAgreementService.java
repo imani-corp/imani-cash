@@ -12,10 +12,11 @@ public class RentalAgreementService implements IRentalAgreementService {
 
 
 
+    public static final String SPRING_BEAN = "com.imani.cash.domain.service.property.rental.RentalAgreementService";
+
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(RentalAgreementService.class);
 
-    public static final String SPRING_BEAN = "com.imani.cash.domain.service.property.rental.RentalAgreementService";
 
 
 
@@ -36,6 +37,7 @@ public class RentalAgreementService implements IRentalAgreementService {
             }
         }
 
+        LOGGER.info("RentalAgreement with ID: {} is not in force, agreement has no document or effective date", rentalAgreement.getId());
         return false;
     }
 
@@ -48,10 +50,19 @@ public class RentalAgreementService implements IRentalAgreementService {
     }
 
     boolean partiesAcceptedAgreement(RentalAgreement rentalAgreement) {
-        return rentalAgreement.isPropertyManagerAcceptedAgreement() && rentalAgreement.isTenantAcceptedAgreement();
+        // Agreement can only be between a Tenant and a Property manager or a Tenant and a Property Owner
+        if(rentalAgreement.isTenantAcceptedAgreement()) {
+            return rentalAgreement.isPropertyManagerAcceptedAgreement() || rentalAgreement.isPropertyOwnerAcceptedAgreement();
+        }
+
+        return false;
     }
 
     boolean partiesAcceptanceDatesRecorded(RentalAgreement rentalAgreement) {
-        return rentalAgreement.getPropertyManagerAcceptanceDate() != null && rentalAgreement.getTenantAcceptanceDate() != null;
+        if(rentalAgreement.getTenantAcceptanceDate() != null) {
+            return rentalAgreement.getPropertyManagerAcceptanceDate() != null || rentalAgreement.getPropertyOwnerAcceptanceDate() != null;
+        }
+
+        return false;
     }
 }

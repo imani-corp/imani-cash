@@ -54,7 +54,7 @@ public class PropertyRentalServiceTest {
         RentalTransaction rentalTransaction = propertyRentalService.getRentalTransactionApartmentAlreadyRentedResult(new UserRecord(), apartment);
         Assert.assertFalse(rentalTransaction.isTransactionSuccessful());
         Assert.assertEquals(RentalTransactionTypeE.Rental, rentalTransaction.getRentalTransactionTypeE());
-        Assert.assertEquals("Apartment is currently rented", rentalTransaction.getTransationMessage().get());
+        Assert.assertEquals("Apartment is currently rented", rentalTransaction.getTransactionMessage());
     }
 
     @Test
