@@ -145,4 +145,39 @@ public class Apartment extends AuditableRecord {
                 .append("rentedByUser", rentedByUser)
                 .toString();
     }
+
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+    public static final class Builder {
+
+        private Apartment apartment = new Apartment();
+
+        public Builder apartmentNumber(String apartmentNumber) {
+            apartment.apartmentNumber = apartmentNumber;
+            return this;
+        }
+
+        public Builder isRented(boolean isRented) {
+            apartment.isRented = isRented;
+            return this;
+        }
+
+        public Builder floor(Floor floor) {
+            apartment.floor = floor;
+            return this;
+        }
+
+        public Builder rentedByUser(UserRecord rentedByUser) {
+            apartment.rentedByUser = rentedByUser;
+            return this;
+        }
+
+        public Apartment build() {
+            return apartment;
+        }
+    }
 }

@@ -214,4 +214,66 @@ public class RentalAgreement {
                 .append("propertyManager", propertyManager)
                 .toString();
     }
+
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
+    public static final class Builder {
+
+        private RentalAgreement rentalAgreement = new RentalAgreement();
+
+        public Builder agreementDocument(String agreementDocument) {
+            rentalAgreement.agreementDocument = agreementDocument;
+            return this;
+        }
+
+        public Builder tenantAcceptedAgreement(boolean tenantAcceptedAgreement) {
+            rentalAgreement.tenantAcceptedAgreement = tenantAcceptedAgreement;
+            return this;
+        }
+
+        public Builder tenantAcceptanceDate(DateTime tenantAcceptanceDate) {
+            rentalAgreement.tenantAcceptanceDate = tenantAcceptanceDate;
+            return this;
+        }
+
+        public Builder propertyManagerAcceptedAgreement(boolean propertyManagerAcceptedAgreement) {
+            rentalAgreement.propertyManagerAcceptedAgreement = propertyManagerAcceptedAgreement;
+            return this;
+        }
+
+        public Builder propertyManagerAcceptanceDate(DateTime propertyManagerAcceptanceDate) {
+            rentalAgreement.propertyManagerAcceptanceDate = propertyManagerAcceptanceDate;
+            return this;
+        }
+
+        public Builder effectiveDate(DateTime effectiveDate) {
+            rentalAgreement.effectiveDate = effectiveDate;
+            return this;
+        }
+
+        public Builder terminationDate(DateTime terminationDate) {
+            rentalAgreement.terminationDate = terminationDate;
+            return this;
+        }
+
+        public Builder rentedByUser(UserRecord rentedByUser) {
+            rentalAgreement.rentedByUser = rentedByUser;
+            return this;
+        }
+
+        public Builder propertyManager(PropertyManager propertyManager) {
+            rentalAgreement.propertyManager = propertyManager;
+            return this;
+        }
+
+        public RentalAgreement build() {
+            return rentalAgreement;
+        }
+
+    }
+
 }

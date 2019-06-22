@@ -16,10 +16,10 @@ import java.util.List;
 @Repository
 public interface IRentalPaymentHistoryRepository extends JpaRepository<RentalPaymentHistory, Long> {
 
-    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.paymentDate >=?2")
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentDate >=?2")
     public List<RentalPaymentHistory> findUserRentalPaymentHistoryByDate(UserRecord userRecord, DateTime paymentDate);
 
-    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE >=?2 and rentalPaymentHistory.paymentDate >=?3")
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE >=?2 and rentalPaymentHistory.embeddedPayment.paymentDate >=?3")
     public List<RentalPaymentHistory> findUserRentalPaymentHistoryByStatusAndDate(UserRecord userRecord, PaymentStatusE paymentStatusE, DateTime paymentDate);
 
 }

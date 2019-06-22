@@ -54,7 +54,7 @@ public class ACHPaymentInfo extends AuditableRecord {
 
     // ServiceProvider that this Payment information belongs to.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PropertyManagerID", nullable = true)
+    @JoinColumn(name = "ServiceProviderID", nullable = true)
     private ServiceProvider serviceProvider;
 
 

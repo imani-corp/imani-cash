@@ -2,6 +2,7 @@ package com.imani.cash.domain.service.property.rental;
 
 import com.imani.cash.domain.property.rental.Apartment;
 import com.imani.cash.domain.property.rental.RentalAgreement;
+import com.imani.cash.domain.property.rental.RentalTransaction;
 import com.imani.cash.domain.user.UserRecord;
 
 /**
@@ -13,9 +14,9 @@ public interface IPropertyRentalService {
     /**
      * Complete the rental process and actually record the rental of Apartment to the UserRecord passed as argument.
      *
-     * @param userRecord
+     * @param tenant
      * @param apartment
      */
-    public void rentApartmentToTenant(RentalAgreement rentalAgreement, UserRecord userRecord, Apartment apartment);
+    public RentalTransaction rentApartmentToTenant(RentalAgreement rentalAgreement, UserRecord tenant, Apartment apartment);
 
 }

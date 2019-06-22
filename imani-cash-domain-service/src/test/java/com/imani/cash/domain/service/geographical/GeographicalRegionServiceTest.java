@@ -25,4 +25,5 @@ public class GeographicalRegionServiceTest {
     public void testInjection() {
         System.out.println("entityManager = " + entityManager);
     }
+
 }

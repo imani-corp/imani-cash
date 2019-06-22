@@ -24,7 +24,10 @@ public class RentalAgreementService implements IRentalAgreementService {
         Assert.notNull(rentalAgreement, "RentalAgreement cannot be null");
         LOGGER.debug("Checking RentalAgreement to see if its still in force => {}", rentalAgreement);
 
-        if(rentalAgreement.getEffectiveDate() != null) {
+        boolean agreementHasDocument = agreementHasDocument(rentalAgreement);
+        boolean agreementHasEffectiveDate = agreementHasEffectiveDate(rentalAgreement);
+
+        if(agreementHasEffectiveDate && agreementHasDocument) {
             boolean partiesAcceptedAgreement = partiesAcceptedAgreement(rentalAgreement);
             boolean partiesAcceptanceDatesRecorded = partiesAcceptanceDatesRecorded(rentalAgreement);
 
@@ -36,6 +39,13 @@ public class RentalAgreementService implements IRentalAgreementService {
         return false;
     }
 
+    boolean agreementHasDocument(RentalAgreement rentalAgreement) {
+        return rentalAgreement.getAgreementDocument() != null && rentalAgreement.getAgreementDocument().length() > 0;
+    }
+
+    boolean agreementHasEffectiveDate(RentalAgreement rentalAgreement) {
+        return rentalAgreement.getEffectiveDate() != null;
+    }
 
     boolean partiesAcceptedAgreement(RentalAgreement rentalAgreement) {
         return rentalAgreement.isPropertyManagerAcceptedAgreement() && rentalAgreement.isTenantAcceptedAgreement();
