@@ -1,5 +1,6 @@
 package com.imani.cash.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,11 +20,17 @@ import javax.persistence.MappedSuperclass;
 @EntityListeners(AuditingEntityListener.class)
 public class AuditableRecord {
 
+
+    // For security reasons dont expose audit field values in JSON
+    @JsonIgnore
     @Column(name = "CreateDate", nullable = false, updatable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
     private DateTime createDate;
 
+
+    // For security reasons dont expose audit field values in JSON
+    @JsonIgnore
     @Column(name = "ModifyDate")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @LastModifiedDate

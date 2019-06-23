@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>imani-cash</artifactId>
+        <groupId>com.imani.spring.framework</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.imani.spring.framework</groupId>
+    <artifactId>imani-cash-gateway-rest</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <name>imani-cash-gateway-rest</name>
+
+
+
+    <dependencies>
+
+        <!-- Imani dependencies -->
+        <dependency>
+            <groupId>com.imani.spring.framework</groupId>
+            <artifactId>imani-cash-domain-service</artifactId>
+            <version>${version}</version>
+        </dependency>
+
+        <!-- Spring dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Enforce Spring Security with OAuth2 authentication -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security.oauth.boot</groupId>-->
+<!--            <artifactId>spring-security-oauth2-autoconfigure</artifactId>-->
+<!--        </dependency>-->
+
+    </dependencies>
+
+
+</project>

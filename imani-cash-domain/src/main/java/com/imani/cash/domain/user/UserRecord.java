@@ -1,5 +1,6 @@
 package com.imani.cash.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -33,16 +34,23 @@ public class UserRecord extends AuditableRecord {
     @Embedded
     private EmbeddedContactInfo embeddedContactInfo;
 
+
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
     @Column(name="Password", nullable=false, length = 20)
     private String password;
 
 
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
     @Column(name="ResetPassword", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean resetPassword;
 
 
     // IF set to true then user is not allowed to access QPalX application
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
     @Column(name="AccountLocked", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
