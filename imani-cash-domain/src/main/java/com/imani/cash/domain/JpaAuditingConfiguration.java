@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.util.Optional;
 
 /**
- * Configuration will enable JPA Auditing.
+ * Configuration will enable JPA Auditing.  All classes that extend AuditableRecord will automatically
+ * get auditing details automatically populated.
  *
  * @author manyce400
  */
