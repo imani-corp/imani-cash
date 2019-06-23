@@ -2,6 +2,7 @@ package com.imani.cash.domain.user.repository;
 
 import com.imani.cash.domain.user.UserRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,5 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IUserRecordRepository extends JpaRepository<UserRecord, Long> {
 
+    @Query("Select userRecord From UserRecord userRecord Where userRecord.embeddedContactInfo.email = ?1")
+    public UserRecord findByUserEmail(String email);
 
 }

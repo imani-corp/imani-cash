@@ -1,8 +1,11 @@
 package com.imani.cash.domain.service.user;
 
+import com.imani.cash.domain.security.encryption.IOneWayClearTextEncryption;
+import com.imani.cash.domain.security.encryption.OneWayClearTextEncryption;
 import com.imani.cash.domain.user.UserRecord;
 import com.imani.cash.domain.user.repository.IUserRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -20,6 +23,11 @@ public class UserRecordManagementService implements IUserRecordManagementService
     private IUserRecordRepository iUserRecordRepository;
 
 
+    @Autowired
+    @Qualifier(OneWayClearTextEncryption.SPRING_BEAN)
+    private IOneWayClearTextEncryption iOneWayClearTextEncryption;
+
+
     public static final String SPRING_BEAN = "com.imani.cash.domain.service.user.UserRecordManagementService";
 
 
@@ -31,6 +39,10 @@ public class UserRecordManagementService implements IUserRecordManagementService
     public void registerUserRecord(UserRecord userRecord) {
         Assert.notNull(userRecord, "UserRecord cannot be null");
         LOGGER.info("Registering new userRecord:=> {}", userRecord);
+
+        // encode the password passed
+        String encoded = iOneWayClearTextEncryption.encryptClearText(userRecord.getPassword());
+        userRecord.setPassword(encoded);
         iUserRecordRepository.save(userRecord);
     }
 

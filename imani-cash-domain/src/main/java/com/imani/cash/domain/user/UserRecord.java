@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
@@ -17,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="UserRecord")
-public class UserRecord extends AuditableRecord {
+public class UserRecord extends AuditableRecord  {
 
 
     @Id
@@ -37,8 +38,20 @@ public class UserRecord extends AuditableRecord {
 
     // For security reasons, this field will not be returned in JSON of this object.
     // @JsonIgnore
-    @Column(name="Password", nullable=false, length = 20)
+    @Column(name="Password", nullable=false, length = 200)
     private String password;
+
+
+    @Column(name="UserRecordType", nullable=false, length=20)
+    @Enumerated(EnumType.STRING)
+    private UserRecordTypeE userRecordTypeE;
+
+
+    // Track the number of unsuccessful login attempts. This should be tracked by security protocols and appropriate actions taken
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
+    @Column(name="UnsuccessfulLoginAttempts", nullable=true)
+    private Integer unsuccessfulLoginAttempts;
 
 
     // For security reasons, this field will not be returned in JSON of this object.
@@ -54,6 +67,22 @@ public class UserRecord extends AuditableRecord {
     @Column(name="AccountLocked", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
+
+
+    // Track and update the last time this user was logged in to our system
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
+    @Column(name = "LastLoginDate", nullable = true)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastLoginDate;
+
+
+    // Track and update the last time this user logged out
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
+    @Column(name = "LastLogoutDate", nullable = true)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastLogoutDate;
 
 
 
@@ -102,6 +131,22 @@ public class UserRecord extends AuditableRecord {
         this.password = password;
     }
 
+    public UserRecordTypeE getUserRecordTypeE() {
+        return userRecordTypeE;
+    }
+
+    public void setUserRecordTypeE(UserRecordTypeE userRecordTypeE) {
+        this.userRecordTypeE = userRecordTypeE;
+    }
+
+    public Integer getUnsuccessfulLoginAttempts() {
+        return unsuccessfulLoginAttempts;
+    }
+
+    public void setUnsuccessfulLoginAttempts(Integer unsuccessfulLoginAttempts) {
+        this.unsuccessfulLoginAttempts = unsuccessfulLoginAttempts;
+    }
+
     public boolean isResetPassword() {
         return resetPassword;
     }
@@ -118,6 +163,21 @@ public class UserRecord extends AuditableRecord {
         this.accountLocked = accountLocked;
     }
 
+    public DateTime getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(DateTime lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public DateTime getLastLogoutDate() {
+        return lastLogoutDate;
+    }
+
+    public void setLastLogoutDate(DateTime lastLogoutDate) {
+        this.lastLogoutDate = lastLogoutDate;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -135,6 +195,10 @@ public class UserRecord extends AuditableRecord {
                 .append(lastName, that.lastName)
                 .append(embeddedContactInfo, that.embeddedContactInfo)
                 .append(password, that.password)
+                .append(userRecordTypeE, that.userRecordTypeE)
+                .append(unsuccessfulLoginAttempts, that.unsuccessfulLoginAttempts)
+                .append(lastLoginDate, that.lastLoginDate)
+                .append(lastLogoutDate, that.lastLogoutDate)
                 .isEquals();
     }
 
@@ -146,8 +210,12 @@ public class UserRecord extends AuditableRecord {
                 .append(lastName)
                 .append(embeddedContactInfo)
                 .append(password)
+                .append(userRecordTypeE)
+                .append(unsuccessfulLoginAttempts)
                 .append(resetPassword)
                 .append(accountLocked)
+                .append(lastLoginDate)
+                .append(lastLogoutDate)
                 .toHashCode();
     }
 
@@ -159,8 +227,13 @@ public class UserRecord extends AuditableRecord {
                 .append("lastName", lastName)
                 .append("embeddedContactInfo", embeddedContactInfo)
                 .append("password", password)
+                .append("userRecordTypeE", userRecordTypeE)
+                .append("unsuccessfulLoginAttempts", unsuccessfulLoginAttempts)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
+                .append("lastLoginDate", lastLoginDate)
+                .append("lastLogoutDate", lastLogoutDate)
                 .toString();
     }
+
 }

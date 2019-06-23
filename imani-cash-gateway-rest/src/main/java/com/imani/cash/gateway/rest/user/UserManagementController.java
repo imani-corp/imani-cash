@@ -5,6 +5,7 @@ import com.imani.cash.domain.service.user.UserRecordManagementService;
 import com.imani.cash.domain.user.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,8 @@ public class UserManagementController {
     @Autowired
     @Qualifier(UserRecordManagementService.SPRING_BEAN)
     private IUserRecordManagementService iUserRecordManagementService;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserManagementController.class);
 
