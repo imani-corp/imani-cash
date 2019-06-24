@@ -2,7 +2,10 @@ package com.imani.cash.gateway.security;
 
 import com.google.common.collect.ImmutableList;
 import com.imani.cash.domain.service.user.CustomUserDetailsService;
+import com.imani.cash.domain.service.user.IUserRecordAuthenticationService;
+import com.imani.cash.domain.service.user.UserRecordAuthenticationService;
 import com.imani.cash.domain.user.UserRecord;
+import com.imani.cash.domain.user.UserRecordAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,11 @@ public class AuthController {
     private UserDetailsService userDetailsService;
 
 
+    @Autowired
+    @Qualifier(UserRecordAuthenticationService.SPRING_BEAN)
+    private IUserRecordAuthenticationService iUserRecordAuthenticationService;
+
+
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AuthController.class);
 
 
@@ -68,6 +76,13 @@ public class AuthController {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
 
+    }
+
+    @PostMapping("/user/login")
+    public UserRecordAuthentication execImaniUserLogin(@RequestBody UserRecord userRecord) {
+        LOGGER.info("Executing Imani login for user:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
+        UserRecordAuthentication userRecordAuthentication = iUserRecordAuthenticationService.authenticateAndLogInUserRecord(userRecord);
+        return userRecordAuthentication;
     }
 
 

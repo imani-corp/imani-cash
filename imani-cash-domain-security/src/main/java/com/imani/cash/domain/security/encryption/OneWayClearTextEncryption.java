@@ -1,7 +1,6 @@
 package com.imani.cash.domain.security.encryption;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,10 +27,10 @@ public class OneWayClearTextEncryption implements IOneWayClearTextEncryption {
         return BCrypt.checkpw(clearText, encryptedText);
     }
 
-    public static void main(String[] args) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String result = encoder.encode("boss");
-        System.out.println("result = " + result);
-    }
+//    public static void main(String[] args) {
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        String result = encoder.encode("boss");
+//        System.out.println("result = " + result);
+//    }
 
 }
