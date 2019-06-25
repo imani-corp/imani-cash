@@ -1,5 +1,6 @@
 package com.imani.cash.domain.contact;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -15,6 +16,7 @@ import javax.persistence.Enumerated;
  * @author manyce400
  */
 @Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmbeddedContactInfo implements IContactInfo {
 
 
@@ -103,5 +105,38 @@ public class EmbeddedContactInfo implements IContactInfo {
                 .append("email", email)
                 .append("preferredContactType", preferredContactType)
                 .toString();
+    }
+
+    public static final Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private EmbeddedContactInfo embeddedContactInfo = new EmbeddedContactInfo();
+
+        public Builder mobilePhone(Long mobilePhone) {
+            embeddedContactInfo.mobilePhone = mobilePhone;
+            return this;
+        }
+
+        public Builder phone(Long phone) {
+            embeddedContactInfo.phone = phone;
+            return this;
+        }
+
+        public Builder email(String email) {
+            embeddedContactInfo.email = email;
+            return this;
+        }
+
+        public Builder preferredContactType(ContactTypeE preferredContactType) {
+            embeddedContactInfo.preferredContactType = preferredContactType;
+            return this;
+        }
+
+        public EmbeddedContactInfo build() {
+            return embeddedContactInfo;
+        }
     }
 }

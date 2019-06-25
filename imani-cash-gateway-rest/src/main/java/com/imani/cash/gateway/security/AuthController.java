@@ -85,5 +85,12 @@ public class AuthController {
         return userRecordAuthentication;
     }
 
+    @PostMapping("/user/logout")
+    public UserRecordAuthentication execImaniUserLogout(@RequestBody UserRecord userRecord) {
+        LOGGER.info("Executing Imani login for user:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
+        UserRecordAuthentication userRecordAuthentication = iUserRecordAuthenticationService.authenticateAndLogOutUserRecord(userRecord);
+        return userRecordAuthentication;
+    }
+
 
 }

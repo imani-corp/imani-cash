@@ -66,11 +66,32 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
         }
     }
 
+
+    @Transactional
+    @Override
+    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserRecord userRecord) {
+        Assert.notNull(userRecord, "UserRecord cannot be null");
+        Assert.notNull(userRecord.getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
+
+        // Verify user by email and that the user is also currently logged in
+        UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(userRecord.getEmbeddedContactInfo().getEmail());
+        if(jpaUserRecord.isLoggedIn()) {
+            LOGGER.info("Logging out UserRecord with email:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
+            jpaUserRecord.setLastLogoutDate(DateTime.now());
+            jpaUserRecord.setLoggedIn(false);
+            iUserRecordRepository.save(jpaUserRecord);
+            return getSuccesfulLogOutUserRecordAuthentication(userRecord);
+        }
+
+        return null;
+    }
+
     UserRecordAuthentication executeUserRecordLogin(UserRecord userRecord) {
         LOGGER.info("UserRecord has been authenticated successfully completing login steps...");
 
         // Fetch the actual UserRecord so we can update statistics on number of times this user has tried to login unsuccessfully to lock their account
         UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(userRecord.getEmbeddedContactInfo().getEmail());
+        jpaUserRecord.setLoggedIn(true);
         jpaUserRecord.setUnsuccessfulLoginAttempts(0);
         jpaUserRecord.setLastLoginDate(DateTime.now());
         iUserRecordRepository.save(jpaUserRecord);
@@ -81,6 +102,17 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
         UserRecordAuthentication userRecordAuthentication = UserRecordAuthentication.builder()
                 .authenticated(Boolean.TRUE)
                 .loggedIn(Boolean.TRUE)
+                .accountLocked(Boolean.FALSE)
+                .userRecord(userRecord)
+                .unsuccessfulLoginAttempts(0)
+                .build();
+        return userRecordAuthentication;
+    }
+
+    UserRecordAuthentication getSuccesfulLogOutUserRecordAuthentication(UserRecord userRecord) {
+        UserRecordAuthentication userRecordAuthentication = UserRecordAuthentication.builder()
+                .authenticated(Boolean.TRUE)
+                .loggedIn(Boolean.FALSE)
                 .accountLocked(Boolean.FALSE)
                 .userRecord(userRecord)
                 .unsuccessfulLoginAttempts(0)
@@ -131,6 +163,7 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
 
         return unsucessfulLoginAttempts;
     }
+
 
     @Override
     public List<UserRecord> findAllUserRecord() {

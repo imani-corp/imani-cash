@@ -13,6 +13,8 @@ public interface IUserRecordAuthenticationService {
 
     public UserRecordAuthentication authenticateAndLogInUserRecord(UserRecord userRecord);
 
+    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserRecord userRecord);
+
     public List<UserRecord> findAllUserRecord();
 
 }

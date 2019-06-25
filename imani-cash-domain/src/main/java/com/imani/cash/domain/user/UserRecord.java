@@ -1,6 +1,7 @@
 package com.imani.cash.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -18,6 +19,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="UserRecord")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserRecord extends AuditableRecord  {
 
 
@@ -52,6 +54,13 @@ public class UserRecord extends AuditableRecord  {
     @JsonIgnore
     @Column(name="UnsuccessfulLoginAttempts", nullable=true)
     private Integer unsuccessfulLoginAttempts;
+
+
+    // For security reasons, this field will not be returned in JSON of this object.
+    @JsonIgnore
+    @Column(name="LoggedIn", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean loggedIn;
 
 
     // For security reasons, this field will not be returned in JSON of this object.
@@ -155,6 +164,14 @@ public class UserRecord extends AuditableRecord  {
         this.resetPassword = resetPassword;
     }
 
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
     public boolean isAccountLocked() {
         return accountLocked;
     }
@@ -188,6 +205,7 @@ public class UserRecord extends AuditableRecord  {
         UserRecord that = (UserRecord) o;
 
         return new EqualsBuilder()
+                .append(loggedIn, that.loggedIn)
                 .append(resetPassword, that.resetPassword)
                 .append(accountLocked, that.accountLocked)
                 .append(id, that.id)
@@ -212,6 +230,7 @@ public class UserRecord extends AuditableRecord  {
                 .append(password)
                 .append(userRecordTypeE)
                 .append(unsuccessfulLoginAttempts)
+                .append(loggedIn)
                 .append(resetPassword)
                 .append(accountLocked)
                 .append(lastLoginDate)
@@ -229,11 +248,80 @@ public class UserRecord extends AuditableRecord  {
                 .append("password", password)
                 .append("userRecordTypeE", userRecordTypeE)
                 .append("unsuccessfulLoginAttempts", unsuccessfulLoginAttempts)
+                .append("loggedIn", loggedIn)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
                 .append("lastLoginDate", lastLoginDate)
                 .append("lastLogoutDate", lastLogoutDate)
                 .toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private UserRecord userRecord = new UserRecord();
+
+        public Builder firstName(String firstName) {
+            userRecord.firstName = firstName;
+            return this;
+        }
+
+        public Builder lastName(String lastName) {
+            userRecord.lastName = lastName;
+            return this;
+        }
+
+        public Builder embeddedContactInfo(EmbeddedContactInfo embeddedContactInfo) {
+            userRecord.embeddedContactInfo = embeddedContactInfo;
+            return this;
+        }
+
+        public Builder password(String password) {
+            userRecord.password = password;
+            return this;
+        }
+
+        public Builder userRecordTypeE(UserRecordTypeE userRecordTypeE) {
+            userRecord.userRecordTypeE = userRecordTypeE;
+            return this;
+        }
+
+        public Builder unsuccessfulLoginAttempts(Integer unsuccessfulLoginAttempts) {
+            userRecord.unsuccessfulLoginAttempts = unsuccessfulLoginAttempts;
+            return this;
+        }
+
+        public Builder loggedIn(boolean loggedIn) {
+            userRecord.loggedIn = loggedIn;
+            return this;
+        }
+
+        public Builder resetPassword(boolean resetPassword) {
+            userRecord.resetPassword = resetPassword;
+            return this;
+        }
+
+        public Builder accountLocked(boolean accountLocked) {
+            userRecord.accountLocked = accountLocked;
+            return this;
+        }
+
+        public Builder lastLoginDate(DateTime lastLoginDate) {
+            userRecord.lastLoginDate = lastLoginDate;
+            return this;
+        }
+
+        public Builder lastLogoutDate(DateTime lastLogoutDate) {
+            userRecord.lastLogoutDate = lastLogoutDate;
+            return this;
+        }
+
+        public UserRecord build() {
+            return userRecord;
+        }
     }
 
 }
