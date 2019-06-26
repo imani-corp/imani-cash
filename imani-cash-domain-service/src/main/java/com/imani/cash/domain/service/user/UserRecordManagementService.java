@@ -3,6 +3,8 @@ package com.imani.cash.domain.service.user;
 import com.imani.cash.domain.security.encryption.IOneWayClearTextEncryption;
 import com.imani.cash.domain.security.encryption.OneWayClearTextEncryption;
 import com.imani.cash.domain.user.UserRecord;
+import com.imani.cash.domain.user.message.UserRecordTransaction;
+import com.imani.cash.domain.user.message.UserRecordTransactionTypeE;
 import com.imani.cash.domain.user.repository.IUserRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,14 +38,23 @@ public class UserRecordManagementService implements IUserRecordManagementService
 
     @Transactional
     @Override
-    public void registerUserRecord(UserRecord userRecord) {
+    public UserRecordTransaction registerUserRecord(UserRecord userRecord) {
         Assert.notNull(userRecord, "UserRecord cannot be null");
-        LOGGER.info("Registering new userRecord:=> {}", userRecord);
+        Assert.notNull(userRecord.getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
 
-        // encode the password passed
-        String encoded = iOneWayClearTextEncryption.encryptClearText(userRecord.getPassword());
-        userRecord.setPassword(encoded);
-        iUserRecordRepository.save(userRecord);
+        // Execute validations, make sure no existing user with the same email.
+        UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(userRecord.getEmbeddedContactInfo().getEmail());
+
+        if (jpaUserRecord == null) {
+            LOGGER.info("Registering new UserRecord for user with email:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
+            String encoded = iOneWayClearTextEncryption.encryptClearText(userRecord.getPassword());
+            userRecord.setPassword(encoded);
+            iUserRecordRepository.save(userRecord);
+            return UserRecordTransaction.instanceOf(Boolean.TRUE, UserRecordTransactionTypeE.RegisterNewUser, userRecord);
+        }
+
+        LOGGER.info("Existing user found.  Cannot register new user with email:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
+        return UserRecordTransaction.instanceOf(Boolean.FALSE, UserRecordTransactionTypeE.RegisterNewUser, userRecord);
     }
 
 }

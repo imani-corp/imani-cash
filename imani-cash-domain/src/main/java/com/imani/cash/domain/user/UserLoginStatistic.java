@@ -38,7 +38,7 @@ public class UserLoginStatistic extends AuditableRecord {
     private DeviceTypeE deviceTypeE;
 
 
-    @Column(name="Email", nullable=true, length=100)
+    @Column(name="DeviceVersion", nullable=true, length=100)
     private String deviceVersion;
 
 

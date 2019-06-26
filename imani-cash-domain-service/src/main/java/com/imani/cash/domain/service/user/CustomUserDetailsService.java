@@ -24,9 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        LOGGER.info("Attempting to find UserRecord with email:=> {}", userName);
+        LOGGER.debug("Attempting to find UserRecord with email:=> {}", userName);
         UserRecord userRecord = iUserRecordRepository.findByUserEmail(userName);
-        LOGGER.info("UserRecord found: {}", userRecord);
+        LOGGER.debug("UserRecord found: {}", userRecord);
 
         if(userRecord != null) {
             JwtUserDetails userDetails = new JwtUserDetails(userRecord);
