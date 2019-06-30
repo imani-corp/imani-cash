@@ -22,8 +22,7 @@ import javax.persistence.MappedSuperclass;
 public class AuditableRecord {
 
 
-    // For security reasons dont expose audit field values in JSON
-    //@JsonIgnore
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "CreateDate", nullable = false, updatable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
