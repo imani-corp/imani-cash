@@ -14,4 +14,7 @@ public interface IUserRecordRepository extends JpaRepository<UserRecord, Long> {
     @Query("Select userRecord From UserRecord userRecord Where userRecord.embeddedContactInfo.email = ?1")
     public UserRecord findByUserEmail(String email);
 
+    @Query("Select userRecord From UserRecord userRecord Where userRecord.embeddedContactInfo.email = ?1 and userRecord.embeddedContactInfo.mobilePhone = ?2")
+    public UserRecord findByUserEmailAndMobilePhone(String email, Long mobilePhone);
+
 }

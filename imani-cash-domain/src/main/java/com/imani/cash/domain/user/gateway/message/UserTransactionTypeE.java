@@ -1,12 +1,14 @@
-package com.imani.cash.domain.user.message;
+package com.imani.cash.domain.user.gateway.message;
 
 /**
  * @author manyce400
  */
-public enum UserRecordTransactionTypeE {
+public enum UserTransactionTypeE {
 
 
-    RegisterNewUser,
+    RegisterNew,
+
+    Login,
 
     CollectUserRent,
 

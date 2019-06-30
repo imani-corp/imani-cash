@@ -1,7 +1,7 @@
 package com.imani.cash.domain.service.user;
 
 import com.imani.cash.domain.user.UserRecord;
-import com.imani.cash.domain.user.message.UserRecordTransaction;
+import com.imani.cash.domain.user.gateway.message.UserTransactionGatewayMessage;
 
 /**
  * @author manyce400
@@ -13,7 +13,7 @@ public interface IUserRecordManagementService {
      *
      * @param userRecord
      */
-    public UserRecordTransaction registerUserRecord(UserRecord userRecord);
+    public UserTransactionGatewayMessage registerUserRecord(UserRecord userRecord);
 
 
 }
