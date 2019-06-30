@@ -1,5 +1,6 @@
 package com.imani.cash.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -22,7 +23,8 @@ public class AuditableRecord {
 
 
     // For security reasons dont expose audit field values in JSON
-    @JsonIgnore
+    //@JsonIgnore
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "CreateDate", nullable = false, updatable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate

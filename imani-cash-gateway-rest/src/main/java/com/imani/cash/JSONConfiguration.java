@@ -1,7 +1,9 @@
 package com.imani.cash;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +28,8 @@ class JSONConfiguration {
     public void enhanceObjectMapper() {
         LOGGER.info("Modifying JacksonMapper ObjectMapper default behavior....");
         mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JodaModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
 

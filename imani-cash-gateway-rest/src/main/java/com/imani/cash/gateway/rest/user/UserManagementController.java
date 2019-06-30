@@ -45,10 +45,11 @@ public class UserManagementController {
     public UserTransactionGatewayMessage registerNewUser(@RequestBody UserTransactionGatewayMessage userTransactionGatewayMessage) {
         LOGGER.info("Attempting to register new Imani Cash from UserTransaction:=> {}", userTransactionGatewayMessage);
         UserTransactionGatewayMessage transactionResult = iUserRecordManagementService.registerUserRecord(userTransactionGatewayMessage.getUserRecord());
+
         System.out.println("transactionResult.getMessageTxnStatusE() = " + transactionResult.getMessageTxnStatusE());
 
         try {
-            String value = mapper.writeValueAsString(userTransactionGatewayMessage);
+            String value = mapper.writeValueAsString(transactionResult);
             System.out.println("Written from SpringBoot JacksonMapper value = " + value);
 
         } catch (Exception e) {
@@ -56,7 +57,7 @@ public class UserManagementController {
         }
 
 
-        return userTransactionGatewayMessage;
+        return transactionResult;
     }
 
 
