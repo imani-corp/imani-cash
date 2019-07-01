@@ -2,9 +2,11 @@ package com.imani.cash.domain.service.user;
 
 import com.imani.cash.domain.user.UserRecord;
 import com.imani.cash.domain.user.UserRecordAuthentication;
+import com.imani.cash.domain.user.gateway.message.UserTransactionGatewayMessage;
 import com.imani.cash.domain.user.repository.IUserRecordRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -28,8 +30,14 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
     @Autowired
     private IUserRecordRepository iUserRecordRepository;
 
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
+
+    @Autowired
+    @Qualifier(UserLoginStatisticService.SPRING_BEAN)
+    private IUserLoginStatisticService iUserLoginStatisticService;
 
 
     public static final String SPRING_BEAN = "com.imani.cash.domain.service.user.UserRecordAuthenticationService";
@@ -41,20 +49,28 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
     /**
      * Authenticate UserRecord and record a login event.
      *
-     * @param userRecord
-     * @return boolean
+     * @param userTransactionGatewayMessage
+     * @return UserRecordAuthentication
      */
     @Transactional
     @Override
-    public UserRecordAuthentication authenticateAndLogInUserRecord(UserRecord userRecord) {
-        Assert.notNull(userRecord, "UserRecord cannot be null");
-        Assert.notNull(userRecord.getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
+    public UserRecordAuthentication authenticateAndLogInUserRecord(UserTransactionGatewayMessage userTransactionGatewayMessage) {
+        Assert.notNull(userTransactionGatewayMessage, "UserTransactionGatewayMessage cannot be null");
+        Assert.notNull(userTransactionGatewayMessage.getUserRecord(), "UserRecord cannot be null");
+        Assert.notNull(userTransactionGatewayMessage.getUserRecord().getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
+        Assert.isTrue(userTransactionGatewayMessage.getUserLoginStatistic().isPresent(), "UserLoginStatistic cannot be empty");
 
-        LOGGER.debug("Attempting to and authenticate userRecord:=>  {}", userRecord.getEmbeddedContactInfo().getEmail());
+        UserRecord userRecord = userTransactionGatewayMessage.getUserRecord();
+        String email = userTransactionGatewayMessage.getUserRecord().getEmbeddedContactInfo().getEmail();
+        String password = userTransactionGatewayMessage.getUserRecord().getPassword();
+
+        LOGGER.debug("Attempting to and authenticate userRecord:=>  {}", email);
 
         try {
-            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRecord.getEmbeddedContactInfo().getEmail(), userRecord.getPassword()));
-            return executeUserRecordLogin(userRecord);
+            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(email);
+            iUserLoginStatisticService.recordUserLoginStatistic(jpaUserRecord, userTransactionGatewayMessage.getUserLoginStatistic().get());
+            return executeUserRecordLogin(userTransactionGatewayMessage.getUserRecord());
         } catch (BadCredentialsException e) {
             LOGGER.info("Invalid credentials supplied for UserRecord:=> {} abandoning login process...", userRecord.getEmbeddedContactInfo().getEmail());
             Integer unsucessfulLoginAttempts = trackUnsuccessfulLoginAttempts(userRecord);

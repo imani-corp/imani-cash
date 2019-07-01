@@ -1,5 +1,7 @@
 package com.imani.cash.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.device.DeviceTypeE;
@@ -22,15 +24,11 @@ public class UserLoginStatistic extends AuditableRecord {
 
 
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID", nullable=false)
     private Long id;
-
-
-    // Unique tracker and username
-    @Column(name="Email", nullable=true, length=100)
-    private String email;
 
 
     @Column(name="DeviceType", nullable=true, length=20)
@@ -46,14 +44,27 @@ public class UserLoginStatistic extends AuditableRecord {
     private String deviceOS;
 
 
+    // Tracks the version of Imani on user's client
+    @Column(name="ImaniClientVersion", nullable=true, length=100)
+    private String iManiClientVersion;
+
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "LastLoginDate", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime loginDate;
 
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "LastLogoutDate", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime logoutDate;
+
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "UserRecordID", nullable = true)
+    private UserRecord userRecord;
 
 
     public UserLoginStatistic() {
@@ -66,14 +77,6 @@ public class UserLoginStatistic extends AuditableRecord {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public DeviceTypeE getDeviceTypeE() {
@@ -100,6 +103,14 @@ public class UserLoginStatistic extends AuditableRecord {
         this.deviceOS = deviceOS;
     }
 
+    public String getiManiClientVersion() {
+        return iManiClientVersion;
+    }
+
+    public void setiManiClientVersion(String iManiClientVersion) {
+        this.iManiClientVersion = iManiClientVersion;
+    }
+
     public DateTime getLoginDate() {
         return loginDate;
     }
@@ -116,6 +127,14 @@ public class UserLoginStatistic extends AuditableRecord {
         this.logoutDate = logoutDate;
     }
 
+    public UserRecord getUserRecord() {
+        return userRecord;
+    }
+
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,12 +145,13 @@ public class UserLoginStatistic extends AuditableRecord {
 
         return new EqualsBuilder()
                 .append(id, that.id)
-                .append(email, that.email)
                 .append(deviceTypeE, that.deviceTypeE)
                 .append(deviceVersion, that.deviceVersion)
                 .append(deviceOS, that.deviceOS)
+                .append(iManiClientVersion, that.iManiClientVersion)
                 .append(loginDate, that.loginDate)
                 .append(logoutDate, that.logoutDate)
+                .append(userRecord, that.userRecord)
                 .isEquals();
     }
 
@@ -139,12 +159,13 @@ public class UserLoginStatistic extends AuditableRecord {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(email)
                 .append(deviceTypeE)
                 .append(deviceVersion)
                 .append(deviceOS)
+                .append(iManiClientVersion)
                 .append(loginDate)
                 .append(logoutDate)
+                .append(userRecord)
                 .toHashCode();
     }
 
@@ -152,12 +173,13 @@ public class UserLoginStatistic extends AuditableRecord {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
-                .append("email", email)
                 .append("deviceTypeE", deviceTypeE)
                 .append("deviceVersion", deviceVersion)
                 .append("deviceOS", deviceOS)
+                .append("iManiClientVersion", iManiClientVersion)
                 .append("loginDate", loginDate)
                 .append("logoutDate", logoutDate)
+                .append("userRecord", userRecord)
                 .toString();
     }
 
@@ -170,10 +192,6 @@ public class UserLoginStatistic extends AuditableRecord {
 
         private UserLoginStatistic userLoginStatistic = new UserLoginStatistic();
 
-        public Builder email(String email) {
-            userLoginStatistic.email = email;
-            return this;
-        }
 
         public Builder deviceTypeE(DeviceTypeE deviceTypeE) {
             userLoginStatistic.deviceTypeE = deviceTypeE;
@@ -190,6 +208,11 @@ public class UserLoginStatistic extends AuditableRecord {
             return this;
         }
 
+        public Builder iManiClientVersion(String iManiClientVersion) {
+            userLoginStatistic.iManiClientVersion = iManiClientVersion;
+            return this;
+        }
+
         public Builder loginDate(DateTime loginDate) {
             userLoginStatistic.loginDate = loginDate;
             return this;
@@ -197,6 +220,11 @@ public class UserLoginStatistic extends AuditableRecord {
 
         public Builder logoutDate(DateTime logoutDate) {
             userLoginStatistic.logoutDate = logoutDate;
+            return this;
+        }
+
+        public Builder userRecord(UserRecord userRecord) {
+            userLoginStatistic.userRecord = userRecord;
             return this;
         }
 

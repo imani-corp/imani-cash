@@ -112,7 +112,7 @@ public class UserTransactionGatewayMessage extends GatewayMessage {
         UserLoginStatistic userLoginStatistic = new UserLoginStatistic();
         userLoginStatistic.setDeviceOS("IOS");
         userLoginStatistic.setDeviceTypeE(DeviceTypeE.IPhone);
-        userLoginStatistic.setEmail("gogaga@yahoo.com");
+        userLoginStatistic.setUserRecord(userRecord);
 
         UserTransactionGatewayMessage userTransactionGatewayMessage = UserTransactionGatewayMessage.builder()
                 .messageTxnStatusE(MessageTxnStatusE.Success)

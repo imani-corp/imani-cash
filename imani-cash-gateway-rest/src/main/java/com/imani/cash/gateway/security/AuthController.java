@@ -6,6 +6,7 @@ import com.imani.cash.domain.service.user.IUserRecordAuthenticationService;
 import com.imani.cash.domain.service.user.UserRecordAuthenticationService;
 import com.imani.cash.domain.user.UserRecord;
 import com.imani.cash.domain.user.UserRecordAuthentication;
+import com.imani.cash.domain.user.gateway.message.UserTransactionGatewayMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -79,9 +80,9 @@ public class AuthController {
     }
 
     @PostMapping("/user/login")
-    public UserRecordAuthentication execImaniUserLogin(@RequestBody UserRecord userRecord) {
-        LOGGER.info("Executing Imani login for user:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
-        UserRecordAuthentication userRecordAuthentication = iUserRecordAuthenticationService.authenticateAndLogInUserRecord(userRecord);
+    public UserRecordAuthentication execImaniUserLogin(@RequestBody UserTransactionGatewayMessage userTransactionGatewayMessage) {
+        LOGGER.info("Executing IMani login process on gateway message:=> {}", userTransactionGatewayMessage);
+        UserRecordAuthentication userRecordAuthentication = iUserRecordAuthenticationService.authenticateAndLogInUserRecord(userTransactionGatewayMessage);
         return userRecordAuthentication;
     }
 
