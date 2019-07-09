@@ -9,7 +9,6 @@ import com.imani.cash.domain.gateway.message.GatewayMessage;
 import com.imani.cash.domain.gateway.message.MessageTxnStatusE;
 import com.imani.cash.domain.user.UserLoginStatistic;
 import com.imani.cash.domain.user.UserRecord;
-import com.imani.cash.domain.user.UserRecordTypeE;
 
 import java.util.Optional;
 
@@ -94,29 +93,24 @@ public class UserTransactionGatewayMessage extends GatewayMessage {
     public static void main(String[] args) {
         EmbeddedContactInfo embeddedContactInfo = EmbeddedContactInfo.builder()
                 .email("testuser@imanicash.com")
-                .mobilePhone(9378978334L)
                 .build();
 
         UserRecord  userRecord = UserRecord.builder()
-                .firstName("Test")
-                .lastName("User")
                 .password("JohnSnow200#")
-                .userRecordTypeE(UserRecordTypeE.Tenant)
                 .embeddedContactInfo(embeddedContactInfo)
-                .accountLocked(false)
-                .unsuccessfulLoginAttempts(0)
                 .build();
 
 
 
-        UserLoginStatistic userLoginStatistic = new UserLoginStatistic();
-        userLoginStatistic.setDeviceOS("IOS");
-        userLoginStatistic.setDeviceTypeE(DeviceTypeE.IPhone);
-        userLoginStatistic.setUserRecord(userRecord);
+        UserLoginStatistic userLoginStatistic = UserLoginStatistic.builder()
+                .deviceOS("IOS")
+                .deviceTypeE(DeviceTypeE.IPhone)
+                .deviceVersion("IPhone X")
+                .iManiClientVersion("IMani IOS 2.0987")
+                .build();
 
         UserTransactionGatewayMessage userTransactionGatewayMessage = UserTransactionGatewayMessage.builder()
-                .messageTxnStatusE(MessageTxnStatusE.Success)
-                .userTransactionTypeE(UserTransactionTypeE.RegisterNew)
+                .userTransactionTypeE(UserTransactionTypeE.Login)
                 .userRecord(userRecord)
                 .userLoginStatistic(userLoginStatistic)
                 .build();

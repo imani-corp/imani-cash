@@ -64,7 +64,7 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
         String email = userTransactionGatewayMessage.getUserRecord().getEmbeddedContactInfo().getEmail();
         String password = userTransactionGatewayMessage.getUserRecord().getPassword();
 
-        LOGGER.debug("Attempting to and authenticate userRecord:=>  {}", email);
+        LOGGER.debug("Attempting to login and authenticate userRecord:=>  {}", email);
 
         try {
             Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));

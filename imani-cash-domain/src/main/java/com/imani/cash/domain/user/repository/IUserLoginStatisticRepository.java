@@ -2,6 +2,7 @@ package com.imani.cash.domain.user.repository;
 
 import com.imani.cash.domain.device.DeviceTypeE;
 import com.imani.cash.domain.user.UserLoginStatistic;
+import com.imani.cash.domain.user.UserRecord;
 import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,16 +17,16 @@ import java.util.List;
 public interface IUserLoginStatisticRepository extends JpaRepository<UserLoginStatistic, Long> {
 
 
-    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.email = ?1")
-    public List<UserLoginStatistic> findAllUserLoginStatistic(String email);
+    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.userRecord = ?1")
+    public List<UserLoginStatistic> findAllUserLoginStatistic(UserRecord userRecord);
 
 
-    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.email = ?1 and userLoginStatistic.deviceTypeE = ?2")
-    public List<UserLoginStatistic> findAllUserLoginStatisticByDevice(String email, DeviceTypeE deviceTypeE);
+    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.userRecord = ?1 and userLoginStatistic.deviceTypeE = ?2")
+    public List<UserLoginStatistic> findAllUserLoginStatisticByDevice(UserRecord userRecord, DeviceTypeE deviceTypeE);
 
 
-    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.email = ?1 and userLoginStatistic.deviceTypeE = ?2 and userLoginStatistic.loginDate = ?3")
-    public List<UserLoginStatistic> findAllUserLoginStatisticByDeviceAndLoginDate(String email, DeviceTypeE deviceTypeE, DateTime loginDate);
+    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.userRecord = ?1 and userLoginStatistic.deviceTypeE = ?2 and userLoginStatistic.loginDate = ?3")
+    public List<UserLoginStatistic> findAllUserLoginStatisticByDeviceAndLoginDate(UserRecord userRecord, DeviceTypeE deviceTypeE, DateTime loginDate);
 
 
 }
