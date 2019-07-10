@@ -54,13 +54,29 @@ public class UserLoginStatisticService implements IUserLoginStatisticService {
 
         LOGGER.debug("Recording Login statistics for user:=> {} from userLoginStatistic:=> {}", jpaUserRecord.getEmbeddedContactInfo().getEmail(), userLoginStatistic);
 
-        // Check to see if there is already a matching UserLoginStatistic
-        Optional<UserLoginStatistic> matchingUserLoginStatistic = findMatchingUserLoginStatistic(jpaUserRecord, userLoginStatistic);
 
-        UserLoginStatistic jpaLoginStatistic;
-        if (!matchingUserLoginStatistic.isPresent()) {
-            LOGGER.debug("No existing UserLoginStatistic recording new....");
-            jpaLoginStatistic = UserLoginStatistic.builder()
+
+        if(jpaUserRecord.isLoggedIn()) {
+            Optional<UserLoginStatistic> matchingUserLoginStatistic = findMatchingUserLoginStatistic(jpaUserRecord, userLoginStatistic);
+
+            if (!matchingUserLoginStatistic.isPresent()) {
+                // Brand new login from a new device configuration so good to save
+                LOGGER.debug("User is currently logged in but no existing UserLoginStatistic recording new one....");
+                UserLoginStatistic jpaLoginStatistic = UserLoginStatistic.builder()
+                        .userRecord(jpaUserRecord)
+                        .loginDate(DateTime.now())
+                        .deviceTypeE(userLoginStatistic.getDeviceTypeE())
+                        .deviceOS(userLoginStatistic.getDeviceOS())
+                        .deviceVersion(userLoginStatistic.getDeviceVersion())
+                        .iManiClientVersion(userLoginStatistic.getiManiClientVersion())
+                        .build();
+                iUserLoginStatisticRepository.save(jpaLoginStatistic);
+                return Optional.of(jpaLoginStatistic);
+            }
+        } else {
+            // Completely new Login.  User currently doesn't have an existing login so safe to always record.
+            LOGGER.debug("User is currently logged in but no existing UserLoginStatistic recording new one....");
+            UserLoginStatistic jpaLoginStatistic = UserLoginStatistic.builder()
                     .userRecord(jpaUserRecord)
                     .loginDate(DateTime.now())
                     .deviceTypeE(userLoginStatistic.getDeviceTypeE())
@@ -71,6 +87,7 @@ public class UserLoginStatisticService implements IUserLoginStatisticService {
             iUserLoginStatisticRepository.save(jpaLoginStatistic);
             return Optional.of(jpaLoginStatistic);
         }
+
 
         LOGGER.warn("Existing UserLoginStatistic found with login recorded already. Not supposed to happen");
         return Optional.empty();

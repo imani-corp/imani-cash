@@ -29,7 +29,7 @@ public interface IUserLoginStatisticRepository extends JpaRepository<UserLoginSt
     public List<UserLoginStatistic> findAllUserLoginStatisticByDeviceAndLoginDate(UserRecord userRecord, DeviceTypeE deviceTypeE, DateTime loginDate);
 
 
-    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.userRecord = ?1 and userLoginStatistic.deviceTypeE = ?2 and userLoginStatistic.deviceVersion = ?3 and userLoginStatistic.deviceOS = ?4 and userLoginStatistic.iManiClientVersion = ?5")
+    @Query("Select userLoginStatistic From UserLoginStatistic userLoginStatistic Where userLoginStatistic.userRecord = ?1 and userLoginStatistic.deviceTypeE = ?2 and userLoginStatistic.deviceVersion = ?3 and userLoginStatistic.deviceOS = ?4 and userLoginStatistic.iManiClientVersion = ?5 and userLoginStatistic.logoutDate is NULL")
     public UserLoginStatistic findMatchingUserLoginStatistic(UserRecord userRecord, DeviceTypeE deviceTypeE, String deviceVersion, String deviceOS, String iManiClientVersion);
 
 
