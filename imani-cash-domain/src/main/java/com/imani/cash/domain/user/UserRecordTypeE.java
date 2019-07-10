@@ -11,7 +11,9 @@ public enum UserRecordTypeE {
 
     PropertyManager,
 
-    Tenant
+    Tenant,
+
+    APIUser
     ;
 
 }
