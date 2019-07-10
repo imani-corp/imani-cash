@@ -69,6 +69,8 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
         try {
             Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(email);
+
+            // Update Login statistic
             iUserLoginStatisticService.recordUserLoginStatistic(jpaUserRecord, userTransactionGatewayMessage.getUserLoginStatistic().get());
             return executeUserRecordLogin(userTransactionGatewayMessage.getUserRecord());
         } catch (BadCredentialsException e) {
@@ -85,20 +87,29 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
 
     @Transactional
     @Override
-    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserRecord userRecord) {
-        Assert.notNull(userRecord, "UserRecord cannot be null");
-        Assert.notNull(userRecord.getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
+    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserTransactionGatewayMessage userTransactionGatewayMessage) {
+        Assert.notNull(userTransactionGatewayMessage, "UserTransactionGatewayMessage cannot be null");
+        Assert.notNull(userTransactionGatewayMessage.getUserRecord(), "UserRecord cannot be null");
+        Assert.notNull(userTransactionGatewayMessage.getUserRecord().getEmbeddedContactInfo(), "EmbeddedContactInfo cannot be null");
+        Assert.isTrue(userTransactionGatewayMessage.getUserLoginStatistic().isPresent(), "UserLoginStatistic cannot be empty");
+
+        UserRecord userRecord = userTransactionGatewayMessage.getUserRecord();
 
         // Verify user by email and that the user is also currently logged in
         UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(userRecord.getEmbeddedContactInfo().getEmail());
+
         if(jpaUserRecord.isLoggedIn()) {
             LOGGER.info("Logging out UserRecord with email:=> {}", userRecord.getEmbeddedContactInfo().getEmail());
             jpaUserRecord.setLastLogoutDate(DateTime.now());
             jpaUserRecord.setLoggedIn(false);
             iUserRecordRepository.save(jpaUserRecord);
+
+            // Update Login statistic
+            iUserLoginStatisticService.recordUserLogoutStatistic(jpaUserRecord, userTransactionGatewayMessage.getUserLoginStatistic().get());
             return getSuccesfulLogOutUserRecordAuthentication(userRecord);
         }
 
+        LOGGER.debug("User is currently not logged in, skipping call to logut...");
         return null;
     }
 
@@ -110,6 +121,7 @@ public class UserRecordAuthenticationService implements IUserRecordAuthenticatio
         jpaUserRecord.setLoggedIn(true);
         jpaUserRecord.setUnsuccessfulLoginAttempts(0);
         jpaUserRecord.setLastLoginDate(DateTime.now());
+        jpaUserRecord.setLastLogoutDate(null); // reset last logout date
         iUserRecordRepository.save(jpaUserRecord);
         return getSuccesfulUserRecordAuthentication(userRecord);
     }

@@ -10,6 +10,8 @@ public enum UserTransactionTypeE {
 
     Login,
 
+    Logout,
+
     CollectUserRent,
 
     RefundUserRent,

@@ -14,7 +14,7 @@ public interface IUserRecordAuthenticationService {
 
     public UserRecordAuthentication authenticateAndLogInUserRecord(UserTransactionGatewayMessage userTransactionGatewayMessage);
 
-    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserRecord userRecord);
+    public UserRecordAuthentication authenticateAndLogOutUserRecord(UserTransactionGatewayMessage userTransactionGatewayMessage);
 
     public List<UserRecord> findAllUserRecord();
 

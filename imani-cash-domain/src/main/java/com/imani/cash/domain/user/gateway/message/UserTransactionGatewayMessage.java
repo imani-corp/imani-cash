@@ -9,6 +9,7 @@ import com.imani.cash.domain.gateway.message.GatewayMessage;
 import com.imani.cash.domain.gateway.message.MessageTxnStatusE;
 import com.imani.cash.domain.user.UserLoginStatistic;
 import com.imani.cash.domain.user.UserRecord;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Optional;
 
@@ -54,6 +55,15 @@ public class UserTransactionGatewayMessage extends GatewayMessage {
 
     public void setUserLoginStatistic(Optional<UserLoginStatistic> userLoginStatistic) {
         this.userLoginStatistic = userLoginStatistic;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("userTransactionTypeE", userTransactionTypeE)
+                .append("userRecord", userRecord)
+                .append("userLoginStatistic", userLoginStatistic)
+                .toString();
     }
 
     public static Builder builder() {
