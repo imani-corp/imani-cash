@@ -261,4 +261,69 @@ public class Property extends AuditableRecord {
                 .append("propertyManager", propertyManager)
                 .toString();
     }
+
+
+    public static final class Builder {
+
+        private Property property = new Property();
+
+        public Builder propertyNumber(Long propertyNumber) {
+            property.propertyNumber = propertyNumber;
+            return this;
+        }
+
+        public Builder streetName(String streetName) {
+            property.streetName = streetName;
+            return this;
+        }
+
+        public Builder block(String block) {
+            property.block = block;
+            return this;
+        }
+
+        public Builder lot(String lot) {
+            property.lot = lot;
+            return this;
+        }
+
+        public Builder buildingIdentificationNumber(Integer buildingIdentificationNumber) {
+            property.buildingIdentificationNumber = buildingIdentificationNumber;
+            return this;
+        }
+
+        public Builder latitude(Double latitude) {
+            property.latitude = latitude;
+            return this;
+        }
+
+        public Builder longitude(Double longitude) {
+            property.longitude = longitude;
+            return this;
+        }
+
+        public Builder zipCode(Integer zipCode) {
+            property.zipCode = zipCode;
+            return this;
+        }
+
+        public Builder propertyTypeE(PropertyTypeE propertyTypeE) {
+            property.propertyTypeE = propertyTypeE;
+            return this;
+        }
+
+        public Builder borough(Borough borough) {
+            property.borough = borough;
+            return this;
+        }
+
+        public Builder propertyManager(PropertyManager propertyManager) {
+            property.propertyManager = propertyManager;
+            return this;
+        }
+
+        public Property build() {
+            return property;
+        }
+    }
 }
