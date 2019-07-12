@@ -26,7 +26,7 @@ public class RentalAgreement {
     private Long id;
 
 
-    @Column(name="AgreementDocument", nullable=false, length = 100)
+    @Column(name="AgreementDocument", nullable=true, length = 100)
     private String agreementDocument;
 
 

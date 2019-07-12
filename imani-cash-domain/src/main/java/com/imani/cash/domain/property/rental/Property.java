@@ -39,7 +39,7 @@ public class Property extends AuditableRecord {
     private Long propertyNumber;
 
 
-    @Column(name="Name", nullable=false, length = 30)
+    @Column(name="StreetName", nullable=false, length = 30)
     private String streetName;
 
 

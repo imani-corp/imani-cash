@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
-import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -93,12 +92,6 @@ public class UserRecord extends AuditableRecord  {
     @Column(name = "LastLogoutDate", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastLogoutDate;
-
-
-    // Maps User to optional Property where they reside.
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ResidentialPropertyID", nullable = true)
-    private Property residentialProperty;
 
 
 
@@ -203,13 +196,6 @@ public class UserRecord extends AuditableRecord  {
         this.lastLogoutDate = lastLogoutDate;
     }
 
-    public Property getResidentialProperty() {
-        return residentialProperty;
-    }
-
-    public void setResidentialProperty(Property residentialProperty) {
-        this.residentialProperty = residentialProperty;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -232,7 +218,6 @@ public class UserRecord extends AuditableRecord  {
                 .append(unsuccessfulLoginAttempts, that.unsuccessfulLoginAttempts)
                 .append(lastLoginDate, that.lastLoginDate)
                 .append(lastLogoutDate, that.lastLogoutDate)
-                .append(residentialProperty, that.residentialProperty)
                 .isEquals();
     }
 
@@ -251,7 +236,6 @@ public class UserRecord extends AuditableRecord  {
                 .append(accountLocked)
                 .append(lastLoginDate)
                 .append(lastLogoutDate)
-                .append(residentialProperty)
                 .toHashCode();
     }
 
@@ -270,7 +254,6 @@ public class UserRecord extends AuditableRecord  {
                 .append("accountLocked", accountLocked)
                 .append("lastLoginDate", lastLoginDate)
                 .append("lastLogoutDate", lastLogoutDate)
-                .append("residentialProperty", residentialProperty)
                 .toString();
     }
 
@@ -337,10 +320,6 @@ public class UserRecord extends AuditableRecord  {
             return this;
         }
 
-        public Builder residentialProperty(Property residentialProperty) {
-            userRecord.residentialProperty = residentialProperty;
-            return this;
-        }
 
         public UserRecord build() {
             return userRecord;

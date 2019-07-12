@@ -30,7 +30,7 @@ public class Floor extends AuditableRecord {
     private Integer floorNumber;
 
 
-    @Column(name="CodeName", nullable=false, length = 30)
+    @Column(name="CodeName", nullable=true, length = 30)
     private String codeName;
 
 
