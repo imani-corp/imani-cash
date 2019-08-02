@@ -1,8 +1,12 @@
 package com.imani.cash.domain.property.rental.repository;
 
+import com.imani.cash.domain.geographical.Borough;
 import com.imani.cash.domain.property.rental.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author manyce400
@@ -10,4 +14,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IPropertyRepository extends JpaRepository<Property, Long> {
 
+
+    @Query("Select property From Property property Where property.propertyNumber =?1 and property.streetName =?2 and property.zipCode =?3")
+    public List<Property> findUniqueProperties(String propertyNumber, String streetName, String zipCode);
+
+    @Query("Select property From Property property Where property.propertyNumber =?1 and property.streetName =?2 and property.zipCode =?3 and property.borough =?4")
+    public List<Property> findUniqueProperties(String propertyNumber, String streetName, String zipCode, Borough borough);
 }

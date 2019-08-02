@@ -25,7 +25,7 @@ import java.util.Set;
  * @author manyce400
  */
 @Entity
-@Table(name="Property")
+@Table(name="Property", indexes = {@Index(name = "Property_Finder_IDX", columnList = "PropertyNumber, StreetName, ZipCode, BoroughID")})
 public class Property extends AuditableRecord {
 
 
@@ -36,10 +36,10 @@ public class Property extends AuditableRecord {
 
 
     @Column(name="PropertyNumber", nullable=false, length=50)
-    private Long propertyNumber;
+    private String propertyNumber;
 
 
-    @Column(name="StreetName", nullable=false, length = 30)
+    @Column(name="StreetName", nullable=false, length = 300)
     private String streetName;
 
 
@@ -54,12 +54,12 @@ public class Property extends AuditableRecord {
 
 
     // Buliding Identification Number is a unique number used to identify the building by City
-    @Column(name="BIN", nullable=true, length=7)
-    private Integer buildingIdentificationNumber;
+    @Column(name="BIN", nullable=true, length=30)
+    private String buildingIdentificationNumber;
 
 
-    @Column(name="ZipCode", nullable=false, length=5)
-    private Integer zipCode;
+    @Column(name="ZipCode", nullable=false, length=30)
+    private String zipCode;
 
     @Column(name="Latitude", nullable=true)
     private Double latitude;
@@ -107,11 +107,11 @@ public class Property extends AuditableRecord {
         this.id = id;
     }
 
-    public Long getPropertyNumber() {
+    public String getPropertyNumber() {
         return propertyNumber;
     }
 
-    public void setPropertyNumber(Long propertyNumber) {
+    public void setPropertyNumber(String propertyNumber) {
         this.propertyNumber = propertyNumber;
     }
 
@@ -139,19 +139,19 @@ public class Property extends AuditableRecord {
         this.lot = lot;
     }
 
-    public Integer getBuildingIdentificationNumber() {
+    public String getBuildingIdentificationNumber() {
         return buildingIdentificationNumber;
     }
 
-    public void setBuildingIdentificationNumber(Integer buildingIdentificationNumber) {
+    public void setBuildingIdentificationNumber(String buildingIdentificationNumber) {
         this.buildingIdentificationNumber = buildingIdentificationNumber;
     }
 
-    public Integer getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(Integer zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -263,11 +263,15 @@ public class Property extends AuditableRecord {
     }
 
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static final class Builder {
 
         private Property property = new Property();
 
-        public Builder propertyNumber(Long propertyNumber) {
+        public Builder propertyNumber(String propertyNumber) {
             property.propertyNumber = propertyNumber;
             return this;
         }
@@ -287,7 +291,7 @@ public class Property extends AuditableRecord {
             return this;
         }
 
-        public Builder buildingIdentificationNumber(Integer buildingIdentificationNumber) {
+        public Builder buildingIdentificationNumber(String buildingIdentificationNumber) {
             property.buildingIdentificationNumber = buildingIdentificationNumber;
             return this;
         }
@@ -302,7 +306,7 @@ public class Property extends AuditableRecord {
             return this;
         }
 
-        public Builder zipCode(Integer zipCode) {
+        public Builder zipCode(String zipCode) {
             property.zipCode = zipCode;
             return this;
         }

@@ -114,4 +114,32 @@ public class Floor extends AuditableRecord {
                 .append("codeName", codeName)
                 .toString();
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private Floor floor = new Floor();
+
+        public Builder floorNumber(Integer floorNumber) {
+            floor.floorNumber = floorNumber;
+            return this;
+        }
+
+        public Builder codeName(String codeName) {
+            floor.codeName = codeName;
+            return this;
+        }
+
+        public Builder property(Property property) {
+            floor.property = property;
+            return this;
+        }
+
+        public Floor build() {
+            return floor;
+        }
+    }
 }

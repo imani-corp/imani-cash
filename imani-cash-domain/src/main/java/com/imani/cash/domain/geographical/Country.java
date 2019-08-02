@@ -24,7 +24,7 @@ public class Country {
     private String countryName;
 
 
-    @Column(name="CountryCode", nullable=false, length=2)
+    @Column(name="CountryCode", nullable=false, length=5)
     private String countryCode;
 
 
