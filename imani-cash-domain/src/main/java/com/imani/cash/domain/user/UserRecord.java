@@ -9,6 +9,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 
@@ -194,6 +196,23 @@ public class UserRecord extends AuditableRecord  {
 
     public void setLastLogoutDate(DateTime lastLogoutDate) {
         this.lastLogoutDate = lastLogoutDate;
+    }
+
+
+    public void updateSafeFieldsWherePresent(UserRecord userRecordToCopy) {
+        Assert.notNull(userRecordToCopy, "userRecordToCopy cannot be null");
+
+        if(StringUtils.hasLength(userRecordToCopy.getFirstName())) {
+            this.setFirstName(userRecordToCopy.getFirstName());
+        }
+
+        if(StringUtils.hasLength(userRecordToCopy.getLastName())) {
+            this.setLastName(userRecordToCopy.getLastName());
+        }
+
+        if(userRecordToCopy.getEmbeddedContactInfo().getPhone() != null) {
+            this.getEmbeddedContactInfo().setPhone(userRecordToCopy.getEmbeddedContactInfo().getPhone());
+        }
     }
 
 

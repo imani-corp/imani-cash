@@ -8,12 +8,28 @@ import com.imani.cash.domain.user.gateway.message.UserTransactionGatewayMessage;
  */
 public interface IUserRecordManagementService {
 
+
+    /**
+     * Registers and creates a new UserRecord.
+     *
+     * @param userRecord
+     */
+    public UserTransactionGatewayMessage getUserRecord(UserRecord userRecord);
+
     /**
      * Registers and creates a new UserRecord.
      *
      * @param userRecord
      */
     public UserTransactionGatewayMessage registerUserRecord(UserRecord userRecord);
+
+
+    /**
+     * Registers and creates a new UserRecord.
+     *
+     * @param userRecord
+     */
+    public UserTransactionGatewayMessage updateUserRecord(UserRecord userRecord);
 
 
 }

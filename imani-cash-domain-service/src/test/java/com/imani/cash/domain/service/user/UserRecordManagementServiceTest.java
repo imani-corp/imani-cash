@@ -61,16 +61,19 @@ public class UserRecordManagementServiceTest {
 
     @Test
     public void testGetUserTransactionGatewayMessageOnSucess() {
-        UserTransactionGatewayMessage userTransactionGatewayMessage = userRecordManagementService.getUserTransactionGatewayMessageOnSucess(userRecord);
+        UserTransactionGatewayMessage userTransactionGatewayMessage = userRecordManagementService.getUserTransactionGatewayMessageOnSucess(userRecord, UserTransactionTypeE.RegisterNew);
         Assert.assertEquals(MessageTxnStatusE.Success, userTransactionGatewayMessage.getMessageTxnStatusE());
+        Assert.assertEquals(UserTransactionTypeE.RegisterNew, userTransactionGatewayMessage.getUserTransactionTypeE());
         Assert.assertEquals(UserTransactionTypeE.RegisterNew, userTransactionGatewayMessage.getUserTransactionTypeE());
         Assert.assertEquals(userRecord, userTransactionGatewayMessage.getUserRecord());
     }
 
     @Test
     public void testGetUserTransactionGatewayMessageOnFail() {
-        UserTransactionGatewayMessage userTransactionGatewayMessage = userRecordManagementService.getUserTransactionGatewayMessageOnFail(userRecord);
+        UserTransactionGatewayMessage userTransactionGatewayMessage = userRecordManagementService.getUserTransactionGatewayMessageOnFail(userRecord, UserTransactionTypeE.RegisterNew, "Validation fail");
         Assert.assertEquals(MessageTxnStatusE.Fail, userTransactionGatewayMessage.getMessageTxnStatusE());
+        Assert.assertEquals(UserTransactionTypeE.RegisterNew, userTransactionGatewayMessage.getUserTransactionTypeE());
+        Assert.assertEquals("Validation fail", userTransactionGatewayMessage.getTxnStatusMessage().get());
         Assert.assertEquals(UserTransactionTypeE.RegisterNew, userTransactionGatewayMessage.getUserTransactionTypeE());
         Assert.assertEquals(userRecord, userTransactionGatewayMessage.getUserRecord());
     }

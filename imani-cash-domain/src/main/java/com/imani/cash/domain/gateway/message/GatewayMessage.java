@@ -2,6 +2,8 @@ package com.imani.cash.domain.gateway.message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Optional;
+
 /**
  * @author manyce400
  */
@@ -11,6 +13,8 @@ public class GatewayMessage {
 
 
     protected MessageTxnStatusE messageTxnStatusE;
+
+    protected Optional<String> txnStatusMessage;
 
 
     public GatewayMessage() {
@@ -25,5 +29,11 @@ public class GatewayMessage {
         this.messageTxnStatusE = messageTxnStatusE;
     }
 
+    public Optional<String> getTxnStatusMessage() {
+        return txnStatusMessage;
+    }
 
+    public void setTxnStatusMessage(Optional<String> txnStatusMessage) {
+        this.txnStatusMessage = txnStatusMessage;
+    }
 }

@@ -79,6 +79,11 @@ public class UserTransactionGatewayMessage extends GatewayMessage {
             return this;
         }
 
+        public Builder txnStatusMessage(String txnStatusMessage) {
+            userTransactionGatewayMessage.txnStatusMessage = Optional.of(txnStatusMessage);
+            return this;
+        }
+
         public Builder userTransactionTypeE(UserTransactionTypeE userTransactionTypeE) {
             userTransactionGatewayMessage.userTransactionTypeE = userTransactionTypeE;
             return this;

@@ -8,6 +8,8 @@ public enum UserTransactionTypeE {
 
     RegisterNew,
 
+    GetUserProfile,
+
     UpdateProfile,
 
     Login,
