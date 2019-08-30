@@ -15,9 +15,19 @@ import java.util.List;
 public interface IPropertyRepository extends JpaRepository<Property, Long> {
 
 
+    @Query("Select property From Property property JOIN FETCH property.floors Where property.id =?1")
+    public Property findUniquePropertyFetchFloors(Long id);
+
+    @Query("Select property From Property property Where property.borough =?1")
+    public List<Property> findBoroughProperties(Borough borough);
+
+    @Query("Select property From Property property JOIN FETCH property.floors Where property.borough =?1")
+    public List<Property> findBoroughPropertiesFetchFloors(Borough borough);
+
     @Query("Select property From Property property Where property.propertyNumber =?1 and property.streetName =?2 and property.zipCode =?3")
     public List<Property> findUniqueProperties(String propertyNumber, String streetName, String zipCode);
 
     @Query("Select property From Property property Where property.propertyNumber =?1 and property.streetName =?2 and property.zipCode =?3 and property.borough =?4")
     public List<Property> findUniqueProperties(String propertyNumber, String streetName, String zipCode, Borough borough);
+
 }

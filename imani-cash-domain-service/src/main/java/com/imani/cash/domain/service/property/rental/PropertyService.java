@@ -2,8 +2,10 @@ package com.imani.cash.domain.service.property.rental;
 
 import com.imani.cash.domain.property.rental.Property;
 import com.imani.cash.domain.property.rental.repository.IPropertyRepository;
+import com.imani.cash.domain.service.property.cache.IPropertyCacheService;
 import com.imani.cash.domain.user.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -11,7 +13,7 @@ import org.springframework.util.Assert;
  * @author manyce400
  */
 @Service(PropertyService.SPRING_BEAN)
-public class PropertyService implements IPropertyService {
+public class PropertyService implements IPropertyService, IPropertyCacheService {
 
 
     @Autowired
@@ -35,5 +37,12 @@ public class PropertyService implements IPropertyService {
         Assert.notNull(userRecord, "UserRecord cannot be null");
         Assert.notNull(property, "property cannot be null");
 
+    }
+
+
+    @CachePut(value="PropertyCache")
+    @Override
+    public void cacheProperty(Property property) {
+        LOGGER.info("Caching property:=> {}", property);
     }
 }

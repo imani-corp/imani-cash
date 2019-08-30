@@ -70,6 +70,24 @@ public class Borough extends AuditableRecord {
         this.city = city;
     }
 
+    public BoroughIndex toBoroughIndex() {
+        BoroughIndex boroughIndex = BoroughIndex.builder()
+                .id(id)
+                .name(name)
+                .boroughId(boroughId)
+                .build();
+
+        if(city != null) {
+            boroughIndex.setCity(city.getName());
+
+            if(city.getState() != null) {
+                boroughIndex.setState(city.getState().getName());
+            }
+        }
+
+        return boroughIndex;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -29,6 +29,7 @@ import java.util.Set;
 public class Property extends AuditableRecord {
 
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID", nullable=false)
@@ -79,13 +80,13 @@ public class Property extends AuditableRecord {
 
 
     // Maps to optional PropertyManagement firm responsible for managing the property
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PropertyManagerID", nullable = true)
     private PropertyManager propertyManager;
 
 
     // Maps to optional PropertyOwner individual that actually owns the property.
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PropertyOwnerID", nullable = true)
     private PropertyOwner propertyOwner;
 
@@ -204,6 +205,31 @@ public class Property extends AuditableRecord {
         floors.add(floor);
     }
 
+    public PropertyIndex toPropertyIndex() {
+        PropertyIndex propertyIndex = PropertyIndex.builder()
+                .id(this.id)
+                .propertyNumber(this.propertyNumber)
+                .streetName(this.streetName)
+                .borough(this.borough.getName())
+                .city(this.borough.getCity().getName())
+                .state(this.borough.getCity().getState().getName())
+                .zipCode(this.zipCode)
+                .build();
+
+        // set PropertyOwner, PropertyManager and total number of floors
+        if(this.propertyOwner != null) {
+            propertyIndex.setPropertyOwner(this.propertyOwner.getBusinessName());
+        }
+
+        if(this.propertyManager != null) {
+            propertyIndex.setPropertyManager(propertyManager.getName());
+        }
+
+        // set total number of floors
+        propertyIndex.setTotalFloors(this.floors.size());
+        return propertyIndex;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -259,6 +285,7 @@ public class Property extends AuditableRecord {
                 .append("propertyTypeE", propertyTypeE)
                 .append("borough", borough)
                 .append("propertyManager", propertyManager)
+                .append("propertyOwner", propertyOwner)
                 .toString();
     }
 

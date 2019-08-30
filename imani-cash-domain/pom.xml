@@ -89,6 +89,12 @@
             <artifactId>jackson-datatype-joda</artifactId>
         </dependency>
 
+        <!-- Spring Solr Data integration -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-solr</artifactId>
+        </dependency>
+
         <!-- Testing dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

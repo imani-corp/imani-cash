@@ -8,14 +8,12 @@ public enum DeviceTypeE {
 
     IPhone,
 
-    Galaxy,
+    MobilePhone,
 
-    HTC,
+    Tablet,
 
-    Huawei,
+    Laptop,
 
-    Nexus,
-
-    Computer
+    Desktop
     ;
 }
