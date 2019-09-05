@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.billing;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,6 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="PropertyService")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PropertyService extends AuditableRecord {
 
 

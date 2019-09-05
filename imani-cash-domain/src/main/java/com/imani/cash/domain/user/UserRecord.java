@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -62,7 +63,6 @@ public class UserRecord extends AuditableRecord  {
 
 
     // For security reasons, this field will not be returned in JSON of this object.
-    @JsonIgnore
     @Column(name="LoggedIn", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean loggedIn;
@@ -214,6 +214,11 @@ public class UserRecord extends AuditableRecord  {
         userPropertyServices.add(userPropertyService);
     }
 
+    public void addUserPropertyServices(List<UserPropertyService> userPropertyServiceList) {
+        Assert.notNull(userPropertyServiceList, "userPropuserPropertyServicesertyService cannot be null");
+        userPropertyServices.addAll(userPropertyServiceList);
+    }
+
     public void setUserPropertyServices(Set<UserPropertyService> userPropertyServices) {
         this.userPropertyServices = userPropertyServices;
     }
@@ -360,6 +365,11 @@ public class UserRecord extends AuditableRecord  {
 
         public Builder addUserPropertyService(UserPropertyService userPropertyService) {
             userRecord.addUserPropertyService(userPropertyService);
+            return this;
+        }
+
+        public Builder addUserPropertyServices(List<UserPropertyService> userPropertyServiceList) {
+            userRecord.addUserPropertyServices(userPropertyServiceList);
             return this;
         }
 

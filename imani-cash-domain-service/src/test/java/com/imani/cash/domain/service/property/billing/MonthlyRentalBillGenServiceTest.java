@@ -1,12 +1,14 @@
 package com.imani.cash.domain.service.property.billing;
 
-import com.google.common.collect.ImmutableList;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import com.imani.cash.domain.property.billing.MonthlyRentalBill;
 import com.imani.cash.domain.property.billing.PropertyService;
 import com.imani.cash.domain.property.billing.repository.IMonthlyRentalBillRepository;
 import com.imani.cash.domain.property.rental.RentalAgreement;
 import com.imani.cash.domain.property.rental.repository.IRentalAgreementRepository;
+import com.imani.cash.domain.service.mock.MockObjectMapper;
 import com.imani.cash.domain.service.util.DateTimeUtil;
 import com.imani.cash.domain.user.UserPropertyService;
 import com.imani.cash.domain.user.UserRecord;
@@ -22,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +51,8 @@ public class MonthlyRentalBillGenServiceTest {
     private MonthlyRentalBillGenService monthlyRentalBillGenService;
 
     private UserRecord userRecord;
+
+    private ObjectMapper mapper = new MockObjectMapper();
 
 
     @Before
@@ -77,7 +82,9 @@ public class MonthlyRentalBillGenServiceTest {
                 .build();
 
         // mockout call to retrieve additional property services that the user has signed up for
-        List<UserPropertyService> userPropertyServices = ImmutableList.of(userPropertyService1, userPropertyService2);
+        List<UserPropertyService> userPropertyServices = new ArrayList<>();//ImmutableList.of(userPropertyService1, userPropertyService2);
+        userPropertyServices.add(userPropertyService1);
+        userPropertyServices.add(userPropertyService2);
         Mockito.when(iUserPropertyServiceRepository.findAllActiveUserPropertyService(Mockito.any())).thenReturn(userPropertyServices);
         
         // Create a RentalAgreement for this test session
@@ -97,6 +104,7 @@ public class MonthlyRentalBillGenServiceTest {
                 .firstName("Test")
                 .lastName("User")
                 .embeddedContactInfo(embeddedContactInfo)
+                .addUserPropertyServices(userPropertyServices)
                 .build();
     }
     
@@ -143,5 +151,12 @@ public class MonthlyRentalBillGenServiceTest {
         Assert.assertEquals(now.getMonthOfYear(), rentalMonth.getMonthOfYear());
         Assert.assertEquals(now.getYear(), rentalMonth.getYear());
         Assert.assertEquals(1, rentalMonth.getDayOfMonth());
+
+        try {
+            String value = mapper.writeValueAsString(monthlyRentalBill.get());
+            System.out.println("value = " + value);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

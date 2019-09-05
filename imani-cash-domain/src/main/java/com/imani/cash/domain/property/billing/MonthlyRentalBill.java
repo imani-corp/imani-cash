@@ -2,6 +2,7 @@ package com.imani.cash.domain.property.billing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,7 +10,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
@@ -18,6 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="MonthlyRentalBill")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MonthlyRentalBill extends AuditableRecord {
 
 
@@ -52,7 +53,6 @@ public class MonthlyRentalBill extends AuditableRecord {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "RentalMonth", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @CreatedDate
     private DateTime rentalMonth;
 
 

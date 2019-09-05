@@ -104,8 +104,10 @@ public class MonthlyRentalBillGenService implements IMonthlyRentalBillGenService
         Sum sum = new Sum();
         if(userPropertyServices != null) {
             userPropertyServices.forEach(userPropertyService -> {
-                LOGGER.debug("Calculating total sum of additional property service:=>  @ monthly cost:=> ", userPropertyService.getPropertyService().getServiceName(), userPropertyService.getPropertyService().getServiceMonthlyCost());
-                sum.increment(userPropertyService.getPropertyService().getServiceMonthlyCost());
+                if (userPropertyService.isActive()) {
+                    LOGGER.debug("Calculating total sum of additional property service:=>  @ monthly cost:=> ", userPropertyService.getPropertyService().getServiceName(), userPropertyService.getPropertyService().getServiceMonthlyCost());
+                    sum.increment(userPropertyService.getPropertyService().getServiceMonthlyCost());
+                }
             });
         }
 

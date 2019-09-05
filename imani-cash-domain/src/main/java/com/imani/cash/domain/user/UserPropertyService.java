@@ -1,5 +1,7 @@
 package com.imani.cash.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.billing.PropertyService;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,6 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="UserPropertyService")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserPropertyService extends AuditableRecord {
 
 
@@ -38,6 +41,7 @@ public class UserPropertyService extends AuditableRecord {
 
 
     // Tracks the User signed up for the PropertyService
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserRecord", nullable = false)
     private UserRecord userRecord;

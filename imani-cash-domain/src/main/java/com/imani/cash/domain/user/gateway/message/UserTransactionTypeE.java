@@ -16,6 +16,8 @@ public enum UserTransactionTypeE {
 
     Logout,
 
+    GenerateRentalBill,
+
     CollectUserRent,
 
     RefundUserRent,
