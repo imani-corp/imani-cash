@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.PropertyManager;
 import com.imani.cash.domain.property.PropertyOwner;
 import com.imani.cash.domain.user.UserRecord;
@@ -17,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="RentalAgreement")
-public class RentalAgreement {
+public class RentalAgreement extends AuditableRecord {
 
 
     @Id
@@ -28,6 +29,11 @@ public class RentalAgreement {
 
     @Column(name="AgreementDocument", nullable=true, length = 100)
     private String agreementDocument;
+
+
+    // Captures recorded montly rental cost
+    @Column(name="MonthlyRentalCost", nullable=false)
+    private Double monthlyRentalCost;
 
 
     // Tracks if tenant accepted the rental agreement
@@ -66,22 +72,29 @@ public class RentalAgreement {
     private DateTime propertyOwnerAcceptanceDate;
 
 
-    @Column(name = "EffectiveDate", nullable = false, updatable = false)
+    @Column(name = "EffectiveDate", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
     private DateTime effectiveDate;
 
 
-    @Column(name = "TerminationDate", nullable = false, updatable = false)
+    // Tracks date when this agreement gets terminated
+    @Column(name = "TerminationDate", nullable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
     private DateTime terminationDate;
 
 
+    // Tracks this RentalAgreement is in effect, note that a termination date should always be set when this field gets set
+    @Column(name="TenantAcceptedAgreement", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean agreementInEffect;
+
+
     // Tracks the User renter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RentedByUserID", nullable = false)
-    private UserRecord rentedByUser;
+    @JoinColumn(name = "UserRecordID", nullable = false)
+    private UserRecord userRecord;
 
 
     // Tracks the optional PropertyManager that established the agreement.
@@ -94,6 +107,12 @@ public class RentalAgreement {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PropertyOwnerID", nullable = true)
     private PropertyOwner propertyOwner;
+
+
+    // Tracks  Property that this agreement was made on
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PropertyID", nullable = true)
+    private Property property;
 
 
     public RentalAgreement() {
@@ -114,6 +133,14 @@ public class RentalAgreement {
 
     public void setAgreementDocument(String agreementDocument) {
         this.agreementDocument = agreementDocument;
+    }
+
+    public Double getMonthlyRentalCost() {
+        return monthlyRentalCost;
+    }
+
+    public void setMonthlyRentalCost(Double monthlyRentalCost) {
+        this.monthlyRentalCost = monthlyRentalCost;
     }
 
     public boolean isTenantAcceptedAgreement() {
@@ -180,12 +207,20 @@ public class RentalAgreement {
         this.terminationDate = terminationDate;
     }
 
-    public UserRecord getRentedByUser() {
-        return rentedByUser;
+    public boolean isAgreementInEffect() {
+        return agreementInEffect;
     }
 
-    public void setRentedByUser(UserRecord rentedByUser) {
-        this.rentedByUser = rentedByUser;
+    public void setAgreementInEffect(boolean agreementInEffect) {
+        this.agreementInEffect = agreementInEffect;
+    }
+
+    public UserRecord getUserRecord() {
+        return userRecord;
+    }
+
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
     }
 
     public PropertyManager getPropertyManager() {
@@ -204,6 +239,14 @@ public class RentalAgreement {
         this.propertyOwner = propertyOwner;
     }
 
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -218,14 +261,17 @@ public class RentalAgreement {
                 .append(propertyOwnerAcceptedAgreement, that.propertyOwnerAcceptedAgreement)
                 .append(id, that.id)
                 .append(agreementDocument, that.agreementDocument)
+                .append(monthlyRentalCost, that.monthlyRentalCost)
                 .append(tenantAcceptanceDate, that.tenantAcceptanceDate)
                 .append(propertyManagerAcceptanceDate, that.propertyManagerAcceptanceDate)
                 .append(propertyOwnerAcceptanceDate, that.propertyOwnerAcceptanceDate)
                 .append(effectiveDate, that.effectiveDate)
                 .append(terminationDate, that.terminationDate)
-                .append(rentedByUser, that.rentedByUser)
+                .append(agreementInEffect, that.agreementInEffect)
+                .append(userRecord, that.userRecord)
                 .append(propertyManager, that.propertyManager)
                 .append(propertyOwner, that.propertyOwner)
+                .append(property, that.property)
                 .isEquals();
     }
 
@@ -234,6 +280,7 @@ public class RentalAgreement {
         return new HashCodeBuilder(17, 37)
                 .append(id)
                 .append(agreementDocument)
+                .append(monthlyRentalCost)
                 .append(tenantAcceptedAgreement)
                 .append(tenantAcceptanceDate)
                 .append(propertyManagerAcceptedAgreement)
@@ -242,9 +289,11 @@ public class RentalAgreement {
                 .append(propertyOwnerAcceptanceDate)
                 .append(effectiveDate)
                 .append(terminationDate)
-                .append(rentedByUser)
+                .append(agreementInEffect)
+                .append(userRecord)
                 .append(propertyManager)
                 .append(propertyOwner)
+                .append(property)
                 .toHashCode();
     }
 
@@ -253,6 +302,7 @@ public class RentalAgreement {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("agreementDocument", agreementDocument)
+                .append("monthlyRentalCost", monthlyRentalCost)
                 .append("tenantAcceptedAgreement", tenantAcceptedAgreement)
                 .append("tenantAcceptanceDate", tenantAcceptanceDate)
                 .append("propertyManagerAcceptedAgreement", propertyManagerAcceptedAgreement)
@@ -261,9 +311,11 @@ public class RentalAgreement {
                 .append("propertyOwnerAcceptanceDate", propertyOwnerAcceptanceDate)
                 .append("effectiveDate", effectiveDate)
                 .append("terminationDate", terminationDate)
-                .append("rentedByUser", rentedByUser)
+                .append("agreementInEffect", agreementInEffect)
+                .append("userRecord", userRecord)
                 .append("propertyManager", propertyManager)
                 .append("propertyOwner", propertyOwner)
+                .append("property", property)
                 .toString();
     }
 
@@ -278,6 +330,11 @@ public class RentalAgreement {
 
         public Builder agreementDocument(String agreementDocument) {
             rentalAgreement.agreementDocument = agreementDocument;
+            return this;
+        }
+
+        public Builder monthlyRentalCost(Double monthlyRentalCost) {
+            rentalAgreement.monthlyRentalCost = monthlyRentalCost;
             return this;
         }
 
@@ -321,8 +378,13 @@ public class RentalAgreement {
             return this;
         }
 
-        public Builder rentedByUser(UserRecord rentedByUser) {
-            rentalAgreement.rentedByUser = rentedByUser;
+        public Builder agreementInEffect(boolean agreementInEffect) {
+            rentalAgreement.agreementInEffect = agreementInEffect;
+            return this;
+        }
+
+        public Builder userRecord(UserRecord userRecord) {
+            rentalAgreement.userRecord = userRecord;
             return this;
         }
 
@@ -333,6 +395,11 @@ public class RentalAgreement {
 
         public Builder propertyOwner(PropertyOwner propertyOwner) {
             rentalAgreement.propertyOwner = propertyOwner;
+            return this;
+        }
+
+        public Builder property(Property property) {
+            rentalAgreement.property = property;
             return this;
         }
 
