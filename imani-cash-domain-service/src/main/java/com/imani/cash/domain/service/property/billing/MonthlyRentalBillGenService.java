@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,7 @@ public class MonthlyRentalBillGenService implements IMonthlyRentalBillGenService
 
     public static final String SPRING_BEAN = "com.imani.cash.domain.service.property.billing.MonthlyRentalBillGenService";
 
+    @Transactional
     @Override
     public Optional<MonthlyRentalBill> generateMthlyBill(UserRecord userRecord) {
         Assert.notNull(userRecord, "UserRecord cannot be null");
@@ -80,6 +82,7 @@ public class MonthlyRentalBillGenService implements IMonthlyRentalBillGenService
                         .paidAmount(0.0)
                         .rentalMonth(dateTimeAtStartOfMonth)
                         .userRecord(userRecord)
+                        .rentalAgreement(rentalAgreement)
                         .billClosed(false)
                         .build();
 

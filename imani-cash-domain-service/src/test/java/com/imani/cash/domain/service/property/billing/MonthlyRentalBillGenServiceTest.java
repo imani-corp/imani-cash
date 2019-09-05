@@ -2,16 +2,11 @@ package com.imani.cash.domain.service.property.billing;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import com.imani.cash.domain.property.billing.MonthlyRentalBill;
-import com.imani.cash.domain.property.billing.PropertyService;
 import com.imani.cash.domain.property.billing.repository.IMonthlyRentalBillRepository;
-import com.imani.cash.domain.property.rental.RentalAgreement;
 import com.imani.cash.domain.property.rental.repository.IRentalAgreementRepository;
 import com.imani.cash.domain.service.mock.MockObjectMapper;
 import com.imani.cash.domain.service.util.DateTimeUtil;
-import com.imani.cash.domain.user.UserPropertyService;
-import com.imani.cash.domain.user.UserRecord;
 import com.imani.cash.domain.user.repository.IUserPropertyServiceRepository;
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -24,15 +19,13 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * @author manyce400 
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MonthlyRentalBillGenServiceTest {
+public class MonthlyRentalBillGenServiceTest extends AbstractMonthlyRentalBillingTest {
     
     
     @Spy
@@ -50,62 +43,14 @@ public class MonthlyRentalBillGenServiceTest {
     @InjectMocks
     private MonthlyRentalBillGenService monthlyRentalBillGenService;
 
-    private UserRecord userRecord;
-
     private ObjectMapper mapper = new MockObjectMapper();
 
 
     @Before
     public void before() {
-        // Create mock PropertyService
-        PropertyService propertyService1 = PropertyService.builder()
-                .serviceName("Monthly Parking")
-                .serviceMonthlyCost(150.00)
-                .serviceActive(true)
-                .build();
-
-        PropertyService propertyService2 = PropertyService.builder()
-                .serviceName("Monthly Laundry")
-                .serviceMonthlyCost(50.00)
-                .serviceActive(true)
-                .build();
-        
-        // Create mock UserPropertyService
-        UserPropertyService userPropertyService1 = UserPropertyService.builder()
-                .propertyService(propertyService1)
-                .active(true)
-                .build();
-
-        UserPropertyService userPropertyService2 = UserPropertyService.builder()
-                .propertyService(propertyService2)
-                .active(true)
-                .build();
-
-        // mockout call to retrieve additional property services that the user has signed up for
-        List<UserPropertyService> userPropertyServices = new ArrayList<>();//ImmutableList.of(userPropertyService1, userPropertyService2);
-        userPropertyServices.add(userPropertyService1);
-        userPropertyServices.add(userPropertyService2);
+        super.before();
         Mockito.when(iUserPropertyServiceRepository.findAllActiveUserPropertyService(Mockito.any())).thenReturn(userPropertyServices);
-        
-        // Create a RentalAgreement for this test session
-        RentalAgreement rentalAgreement = RentalAgreement.builder()
-                .agreementInEffect(true)
-                .monthlyRentalCost(1800.00)
-                .build();
-        
         Mockito.when(iRentalAgreementRepository.findActiveUserRentalAgreement(Mockito.any())).thenReturn(rentalAgreement);
-
-        // Create Mock user for these tests
-        EmbeddedContactInfo embeddedContactInfo = EmbeddedContactInfo.builder()
-                .email("test.user@imani.com")
-                .build();
-
-        userRecord = UserRecord.builder()
-                .firstName("Test")
-                .lastName("User")
-                .embeddedContactInfo(embeddedContactInfo)
-                .addUserPropertyServices(userPropertyServices)
-                .build();
     }
     
     
@@ -132,7 +77,7 @@ public class MonthlyRentalBillGenServiceTest {
     
     
     @Test
-    public void testgenerateMthlyBill() {
+    public void testGenerateMthlyBill() {
         // Simulate no current monthly bill has already been created for user
         Mockito.when(iMonthlyRentalBillRepository.getUserMonthlyRentalBill(Mockito.any(), Mockito.any())).thenReturn(null);
 

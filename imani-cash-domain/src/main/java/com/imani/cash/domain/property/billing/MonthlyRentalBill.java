@@ -1,9 +1,10 @@
 package com.imani.cash.domain.property.billing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.imani.cash.domain.AuditableRecord;
+import com.imani.cash.domain.property.rental.RentalAgreement;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -23,6 +24,7 @@ public class MonthlyRentalBill extends AuditableRecord {
 
 
 
+    @JsonProperty("house_number")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID", nullable=false)
@@ -58,7 +60,6 @@ public class MonthlyRentalBill extends AuditableRecord {
 
     // Bill should be closed at the end of the monthly billing cycle.
     // All unpaid/uncollected charges should be moved forward to the next billing cycle.
-    @JsonIgnore
     @Column(name="BillClosed", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean billClosed;
@@ -68,6 +69,12 @@ public class MonthlyRentalBill extends AuditableRecord {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "UserRecordID", nullable = false)
     private UserRecord userRecord;
+
+
+    // Tracks the RentalAgreement linked to this monthly payment
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "RentalAgreementID", nullable = false)
+    private RentalAgreement rentalAgreement;
 
 
     public MonthlyRentalBill() {
@@ -146,6 +153,18 @@ public class MonthlyRentalBill extends AuditableRecord {
         this.userRecord = userRecord;
     }
 
+    public RentalAgreement getRentalAgreement() {
+        return rentalAgreement;
+    }
+
+    public void setRentalAgreement(RentalAgreement rentalAgreement) {
+        this.rentalAgreement = rentalAgreement;
+    }
+
+    public boolean isFullyPaid() {
+        return totalMonthlyCharge.equals(paidAmount);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -164,6 +183,7 @@ public class MonthlyRentalBill extends AuditableRecord {
                 .append(paidAmount, that.paidAmount)
                 .append(rentalMonth, that.rentalMonth)
                 .append(userRecord, that.userRecord)
+                .append(rentalAgreement, that.rentalAgreement)
                 .isEquals();
     }
 
@@ -179,6 +199,7 @@ public class MonthlyRentalBill extends AuditableRecord {
                 .append(rentalMonth)
                 .append(billClosed)
                 .append(userRecord)
+                .append(rentalAgreement)
                 .toHashCode();
     }
 
@@ -194,6 +215,7 @@ public class MonthlyRentalBill extends AuditableRecord {
                 .append("rentalMonth", rentalMonth)
                 .append("billClosed", billClosed)
                 .append("userRecord", userRecord)
+                .append("rentalAgreement", rentalAgreement)
                 .toString();
     }
 
@@ -243,6 +265,11 @@ public class MonthlyRentalBill extends AuditableRecord {
 
         public Builder userRecord(UserRecord userRecord) {
             monthlyRentalBill.userRecord = userRecord;
+            return this;
+        }
+
+        public Builder rentalAgreement(RentalAgreement rentalAgreement) {
+            monthlyRentalBill.rentalAgreement = rentalAgreement;
             return this;
         }
 
