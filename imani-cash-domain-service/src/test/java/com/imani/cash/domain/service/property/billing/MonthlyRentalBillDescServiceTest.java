@@ -23,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Optional;
 
 /**
+ * TODO complete test assertions.  Add property, apartment, floors, room details and verify.
  * @author manyce400 
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -58,9 +59,6 @@ public class MonthlyRentalBillDescServiceTest extends AbstractMonthlyRentalBilli
     @Before
     public void before() {
         super.before();
-//        monthlyRentalFeeService = Mockito.spy(new MonthlyRentalFeeService());
-//        monthlyPropertySvcChargeService = Mockito.spy(new MonthlyPropertySvcChargeService());
-//        MockitoAnnotations.initMocks(this);
         Mockito.when(iUserResidenceRepository.findUserResidence(Mockito.any())).thenReturn(userResidence);
         Mockito.when(iMonthlyRentalBillRepository.getUserMonthlyRentalBill(Mockito.any(), Mockito.any())).thenReturn(null);
 
