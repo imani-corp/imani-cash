@@ -31,4 +31,12 @@ public class DateTimeUtilTest {
         Assert.assertEquals("2019-09-01 00:00:00", dateTimeAtStartOfMonth);
         System.out.println("dateTimeAtStartOfMonth = " + dateTimeAtStartOfMonth);
     }
+
+    @Test
+    public void testGetDaysBetweenDates() {
+        DateTime start = DateTime.parse("2019-09-03 09:00:00", DEFAULT_FORMATTER);
+        DateTime end = DateTime.parse("2019-09-05 09:00:00", DEFAULT_FORMATTER);
+        int daysBetween = dateTimeUtil.getDaysBetweenDates(start, end);
+        Assert.assertEquals(2, daysBetween);
+    }
 }

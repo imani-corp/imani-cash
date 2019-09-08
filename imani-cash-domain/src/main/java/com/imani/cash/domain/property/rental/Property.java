@@ -91,6 +91,11 @@ public class Property extends AuditableRecord {
     private PropertyOwner propertyOwner;
 
 
+    // Determines how many days a monthly rental payment can be late for till before late fee's are applied.
+    @Column(name="MthlyNumberOfDaysPaymentLate", nullable=true)
+    private Integer mthlyNumberOfDaysPaymentLate;
+
+
     // Contains collection of all Floors that are in this property
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "property")
     private Set<Floor> floors = new HashSet<>();
@@ -196,6 +201,22 @@ public class Property extends AuditableRecord {
         this.propertyManager = propertyManager;
     }
 
+    public PropertyOwner getPropertyOwner() {
+        return propertyOwner;
+    }
+
+    public void setPropertyOwner(PropertyOwner propertyOwner) {
+        this.propertyOwner = propertyOwner;
+    }
+
+    public Integer getMthlyNumberOfDaysPaymentLate() {
+        return mthlyNumberOfDaysPaymentLate;
+    }
+
+    public void setMthlyNumberOfDaysPaymentLate(Integer mthlyNumberOfDaysPaymentLate) {
+        this.mthlyNumberOfDaysPaymentLate = mthlyNumberOfDaysPaymentLate;
+    }
+
     public Set<Floor> getFloors() {
         return ImmutableSet.copyOf(floors);
     }
@@ -236,20 +257,23 @@ public class Property extends AuditableRecord {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        Property that = (Property) o;
+        Property property = (Property) o;
 
         return new EqualsBuilder()
-                .append(id, that.id)
-                .append(propertyNumber, that.propertyNumber)
-                .append(streetName, that.streetName)
-                .append(block, that.block)
-                .append(lot, that.lot)
-                .append(buildingIdentificationNumber, that.buildingIdentificationNumber)
-                .append(zipCode, that.zipCode)
-                .append(latitude, that.latitude)
-                .append(longitude, that.longitude)
-                .append(propertyTypeE, propertyTypeE)
-                .append(borough, that.borough)
+                .append(id, property.id)
+                .append(propertyNumber, property.propertyNumber)
+                .append(streetName, property.streetName)
+                .append(block, property.block)
+                .append(lot, property.lot)
+                .append(buildingIdentificationNumber, property.buildingIdentificationNumber)
+                .append(zipCode, property.zipCode)
+                .append(latitude, property.latitude)
+                .append(longitude, property.longitude)
+                .append(propertyTypeE, property.propertyTypeE)
+                .append(borough, property.borough)
+                .append(propertyManager, property.propertyManager)
+                .append(propertyOwner, property.propertyOwner)
+                .append(mthlyNumberOfDaysPaymentLate, property.mthlyNumberOfDaysPaymentLate)
                 .isEquals();
     }
 
@@ -262,11 +286,14 @@ public class Property extends AuditableRecord {
                 .append(block)
                 .append(lot)
                 .append(buildingIdentificationNumber)
+                .append(zipCode)
                 .append(latitude)
                 .append(longitude)
-                .append(zipCode)
                 .append(propertyTypeE)
                 .append(borough)
+                .append(propertyManager)
+                .append(propertyOwner)
+                .append(mthlyNumberOfDaysPaymentLate)
                 .toHashCode();
     }
 
@@ -279,16 +306,17 @@ public class Property extends AuditableRecord {
                 .append("block", block)
                 .append("lot", lot)
                 .append("buildingIdentificationNumber", buildingIdentificationNumber)
+                .append("zipCode", zipCode)
                 .append("latitude", latitude)
                 .append("longitude", longitude)
-                .append("zipCode", zipCode)
                 .append("propertyTypeE", propertyTypeE)
                 .append("borough", borough)
                 .append("propertyManager", propertyManager)
                 .append("propertyOwner", propertyOwner)
+                .append("mthlyNumberOfDaysPaymentLate", mthlyNumberOfDaysPaymentLate)
+                .append("floors", floors)
                 .toString();
     }
-
 
     public static Builder builder() {
         return new Builder();
@@ -352,6 +380,17 @@ public class Property extends AuditableRecord {
             property.propertyManager = propertyManager;
             return this;
         }
+
+        public Builder propertyOwner(PropertyOwner propertyOwner) {
+            property.propertyOwner = propertyOwner;
+            return this;
+        }
+
+        public Builder mthlyNumberOfDaysPaymentLate(Integer mthlyNumberOfDaysPaymentLate) {
+            property.mthlyNumberOfDaysPaymentLate = mthlyNumberOfDaysPaymentLate;
+            return this;
+        }
+
 
         public Property build() {
             return property;

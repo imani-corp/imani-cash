@@ -1,6 +1,7 @@
 package com.imani.cash.domain.service.util;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.MutableDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -30,4 +31,10 @@ public class DateTimeUtil implements IDateTimeUtil {
         return mutableDateTime.toDateTime().withTimeAtStartOfDay();
     }
 
+    @Override
+    public Integer getDaysBetweenDates(DateTime start, DateTime end) {
+        Assert.notNull(start, "start cannot be null");
+        Assert.notNull(end, "end cannot be null");
+        return Days.daysBetween(start, end).getDays();
+    }
 }

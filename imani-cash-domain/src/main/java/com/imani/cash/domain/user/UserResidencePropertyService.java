@@ -17,9 +17,9 @@ import javax.persistence.*;
  * @author manyce400
  */
 @Entity
-@Table(name="UserPropertyService")
+@Table(name="UserResidencePropertyService")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserPropertyService extends AuditableRecord {
+public class UserResidencePropertyService extends AuditableRecord {
 
 
 
@@ -43,11 +43,11 @@ public class UserPropertyService extends AuditableRecord {
     // Tracks the User signed up for the PropertyService
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserRecord", nullable = false)
-    private UserRecord userRecord;
+    @JoinColumn(name = "UserResidenceID", nullable = false)
+    private UserResidence userResidence;
 
 
-    public UserPropertyService() {
+    public UserResidencePropertyService() {
 
     }
 
@@ -76,12 +76,12 @@ public class UserPropertyService extends AuditableRecord {
         this.propertyService = propertyService;
     }
 
-    public UserRecord getUserRecord() {
-        return userRecord;
+    public UserResidence getUserResidence() {
+        return userResidence;
     }
 
-    public void setUserRecord(UserRecord userRecord) {
-        this.userRecord = userRecord;
+    public void setUserResidence(UserResidence userResidence) {
+        this.userResidence = userResidence;
     }
 
     @Override
@@ -90,13 +90,13 @@ public class UserPropertyService extends AuditableRecord {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserPropertyService that = (UserPropertyService) o;
+        UserResidencePropertyService that = (UserResidencePropertyService) o;
 
         return new EqualsBuilder()
                 .append(active, that.active)
                 .append(id, that.id)
                 .append(propertyService, that.propertyService)
-                .append(userRecord, that.userRecord)
+                .append(userResidence, that.userResidence)
                 .isEquals();
     }
 
@@ -106,7 +106,7 @@ public class UserPropertyService extends AuditableRecord {
                 .append(id)
                 .append(active)
                 .append(propertyService)
-                .append(userRecord)
+                .append(userResidence)
                 .toHashCode();
     }
 
@@ -116,7 +116,7 @@ public class UserPropertyService extends AuditableRecord {
                 .append("id", id)
                 .append("active", active)
                 .append("propertyService", propertyService)
-                .append("userRecord", userRecord)
+                .append("userResidence", userResidence)
                 .toString();
     }
 
@@ -127,25 +127,25 @@ public class UserPropertyService extends AuditableRecord {
 
     public static final class Builder {
 
-        private UserPropertyService userPropertyService = new UserPropertyService();
+        private UserResidencePropertyService userResidencePropertyService = new UserResidencePropertyService();
 
         public Builder active(boolean active) {
-            userPropertyService.active = active;
+            userResidencePropertyService.active = active;
             return this;
         }
 
         public Builder propertyService(PropertyService propertyService) {
-            userPropertyService.propertyService = propertyService;
+            userResidencePropertyService.propertyService = propertyService;
             return this;
         }
 
-        public Builder userRecord(UserRecord userRecord) {
-            userPropertyService.userRecord = userRecord;
+        public Builder userResidence(UserResidence userResidence) {
+            userResidencePropertyService.userResidence = userResidence;
             return this;
         }
 
-        public UserPropertyService build() {
-            return userPropertyService;
+        public UserResidencePropertyService build() {
+            return userResidencePropertyService;
         }
     }
 }

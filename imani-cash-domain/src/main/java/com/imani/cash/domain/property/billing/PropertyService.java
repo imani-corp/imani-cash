@@ -3,8 +3,6 @@ package com.imani.cash.domain.property.billing;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.rental.Property;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 
@@ -91,44 +89,14 @@ public class PropertyService extends AuditableRecord {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PropertyService that = (PropertyService) o;
-
-        return new EqualsBuilder()
-                .append(serviceActive, that.serviceActive)
-                .append(id, that.id)
-                .append(serviceName, that.serviceName)
-                .append(serviceMonthlyCost, that.serviceMonthlyCost)
-                .append(property, that.property)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(id)
-                .append(serviceName)
-                .append(serviceMonthlyCost)
-                .append(serviceActive)
-                .append(property)
-                .toHashCode();
-    }
-
-    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
                 .append("serviceName", serviceName)
-                .append("serviceMonthlyCost", serviceMonthlyCost)
                 .append("serviceActive", serviceActive)
                 .append("property", property)
                 .toString();
     }
-
 
     public static Builder builder() {
         return new Builder();

@@ -2,17 +2,20 @@ package com.imani.cash.domain.property.billing;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.rental.RentalAgreement;
-import com.imani.cash.domain.user.UserRecord;
+import com.imani.cash.domain.user.UserResidence;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author manyce400
@@ -24,31 +27,15 @@ public class MonthlyRentalBill extends AuditableRecord {
 
 
 
-    @JsonProperty("house_number")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID", nullable=false)
     private Long id;
 
 
-    @Column(name="RentalAmountCharge", nullable=true)
-    private Double rentalAmountCharge;
-
-
-    @Column(name="AdditionalServicesCharge", nullable=true)
-    private Double additionalServicesCharge;
-
-
-    @Column(name="UnpaidAmountCharge", nullable=true)
-    private Double unpaidAmountCharge;
-
-
-    @Column(name="UnpaidAmountCharge", nullable=true)
-    private Double totalMonthlyCharge;
-
-
-    @Column(name="PaidAmount", nullable=true)
-    private Double paidAmount;
+    // Tracks the total amount that has currently been paid on this MonthlyRentalBill
+    @Column(name="AmountPaid", nullable=true)
+    private Double amountPaid;
 
 
     // Tracks the month for which this monthly rental bill is due for
@@ -67,14 +54,19 @@ public class MonthlyRentalBill extends AuditableRecord {
 
     // Tracks the User renter
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "UserRecordID", nullable = false)
-    private UserRecord userRecord;
+    @JoinColumn(name = "UserResidenceID", nullable = false)
+    private UserResidence userResidence;
 
 
     // Tracks the RentalAgreement linked to this monthly payment
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "RentalAgreementID", nullable = false)
     private RentalAgreement rentalAgreement;
+
+
+    // Tracks all additional fees that should be applied to this bill
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "monthlyRentalBill")
+    private Set<MonthlyRentalBillFee> monthlyRentalBillFees = new HashSet<>();
 
 
     public MonthlyRentalBill() {
@@ -89,44 +81,12 @@ public class MonthlyRentalBill extends AuditableRecord {
         this.id = id;
     }
 
-    public Double getRentalAmountCharge() {
-        return rentalAmountCharge;
+    public Double getAmountPaid() {
+        return amountPaid;
     }
 
-    public void setRentalAmountCharge(Double rentalAmountCharge) {
-        this.rentalAmountCharge = rentalAmountCharge;
-    }
-
-    public Double getAdditionalServicesCharge() {
-        return additionalServicesCharge;
-    }
-
-    public void setAdditionalServicesCharge(Double additionalServicesCharge) {
-        this.additionalServicesCharge = additionalServicesCharge;
-    }
-
-    public Double getUnpaidAmountCharge() {
-        return unpaidAmountCharge;
-    }
-
-    public void setUnpaidAmountCharge(Double unpaidAmountCharge) {
-        this.unpaidAmountCharge = unpaidAmountCharge;
-    }
-
-    public Double getTotalMonthlyCharge() {
-        return totalMonthlyCharge;
-    }
-
-    public void setTotalMonthlyCharge(Double totalMonthlyCharge) {
-        this.totalMonthlyCharge = totalMonthlyCharge;
-    }
-
-    public Double getPaidAmount() {
-        return paidAmount;
-    }
-
-    public void setPaidAmount(Double paidAmount) {
-        this.paidAmount = paidAmount;
+    public void setAmountPaid(Double amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     public DateTime getRentalMonth() {
@@ -145,12 +105,12 @@ public class MonthlyRentalBill extends AuditableRecord {
         this.billClosed = billClosed;
     }
 
-    public UserRecord getUserRecord() {
-        return userRecord;
+    public UserResidence getUserResidence() {
+        return userResidence;
     }
 
-    public void setUserRecord(UserRecord userRecord) {
-        this.userRecord = userRecord;
+    public void setUserResidence(UserResidence userResidence) {
+        this.userResidence = userResidence;
     }
 
     public RentalAgreement getRentalAgreement() {
@@ -161,8 +121,17 @@ public class MonthlyRentalBill extends AuditableRecord {
         this.rentalAgreement = rentalAgreement;
     }
 
-    public boolean isFullyPaid() {
-        return totalMonthlyCharge.equals(paidAmount);
+    public void addMonthlyRentalFee(MonthlyRentalFee monthlyRentalFee) {
+        Assert.notNull(monthlyRentalFee, "MonthlyRentalFee cannot be null");
+        MonthlyRentalBillFee monthlyRentalBillFee = MonthlyRentalBillFee.builder()
+                .monthlyRentalFee(monthlyRentalFee)
+                .monthlyRentalBill(this)
+                .build();
+        monthlyRentalBillFees.add(monthlyRentalBillFee);
+    }
+
+    public Set<MonthlyRentalBillFee> getMonthlyRentalBillFees() {
+        return ImmutableSet.copyOf(monthlyRentalBillFees);
     }
 
     @Override
@@ -176,13 +145,9 @@ public class MonthlyRentalBill extends AuditableRecord {
         return new EqualsBuilder()
                 .append(billClosed, that.billClosed)
                 .append(id, that.id)
-                .append(rentalAmountCharge, that.rentalAmountCharge)
-                .append(additionalServicesCharge, that.additionalServicesCharge)
-                .append(unpaidAmountCharge, that.unpaidAmountCharge)
-                .append(totalMonthlyCharge, that.totalMonthlyCharge)
-                .append(paidAmount, that.paidAmount)
+                .append(amountPaid, that.amountPaid)
                 .append(rentalMonth, that.rentalMonth)
-                .append(userRecord, that.userRecord)
+                .append(userResidence, that.userResidence)
                 .append(rentalAgreement, that.rentalAgreement)
                 .isEquals();
     }
@@ -191,14 +156,10 @@ public class MonthlyRentalBill extends AuditableRecord {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(rentalAmountCharge)
-                .append(additionalServicesCharge)
-                .append(unpaidAmountCharge)
-                .append(totalMonthlyCharge)
-                .append(paidAmount)
+                .append(amountPaid)
                 .append(rentalMonth)
                 .append(billClosed)
-                .append(userRecord)
+                .append(userResidence)
                 .append(rentalAgreement)
                 .toHashCode();
     }
@@ -207,14 +168,10 @@ public class MonthlyRentalBill extends AuditableRecord {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
-                .append("rentalAmountCharge", rentalAmountCharge)
-                .append("additionalServicesCharge", additionalServicesCharge)
-                .append("unpaidAmountCharge", unpaidAmountCharge)
-                .append("totalMonthlyCharge", totalMonthlyCharge)
-                .append("paidAmount", paidAmount)
+                .append("amountPaid", amountPaid)
                 .append("rentalMonth", rentalMonth)
                 .append("billClosed", billClosed)
-                .append("userRecord", userRecord)
+                .append("userResidence", userResidence)
                 .append("rentalAgreement", rentalAgreement)
                 .toString();
     }
@@ -227,29 +184,8 @@ public class MonthlyRentalBill extends AuditableRecord {
 
         private MonthlyRentalBill monthlyRentalBill = new MonthlyRentalBill();
 
-
-        public Builder rentalAmountCharge(Double rentalAmountCharge) {
-            monthlyRentalBill.rentalAmountCharge = rentalAmountCharge;
-            return this;
-        }
-
-        public Builder additionalServicesCharge(Double additionalServicesCharge) {
-            monthlyRentalBill.additionalServicesCharge = additionalServicesCharge;
-            return this;
-        }
-
-        public Builder unpaidAmountCharge(Double unpaidAmountCharge) {
-            monthlyRentalBill.unpaidAmountCharge = unpaidAmountCharge;
-            return this;
-        }
-
-        public Builder totalMonthlyCharge(Double totalMonthlyCharge) {
-            monthlyRentalBill.totalMonthlyCharge = totalMonthlyCharge;
-            return this;
-        }
-
-        public Builder paidAmount(Double paidAmount) {
-            monthlyRentalBill.paidAmount = paidAmount;
+        public Builder amountPaid(Double amountPaid) {
+            monthlyRentalBill.amountPaid = amountPaid;
             return this;
         }
 
@@ -263,13 +199,18 @@ public class MonthlyRentalBill extends AuditableRecord {
             return this;
         }
 
-        public Builder userRecord(UserRecord userRecord) {
-            monthlyRentalBill.userRecord = userRecord;
+        public Builder userResidence(UserResidence userResidence) {
+            monthlyRentalBill.userResidence = userResidence;
             return this;
         }
 
         public Builder rentalAgreement(RentalAgreement rentalAgreement) {
             monthlyRentalBill.rentalAgreement = rentalAgreement;
+            return this;
+        }
+
+        public Builder monthlyRentalFee(MonthlyRentalFee monthlyRentalFee) {
+            monthlyRentalBill.addMonthlyRentalFee(monthlyRentalFee);
             return this;
         }
 

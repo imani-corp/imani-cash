@@ -2,7 +2,6 @@ package com.imani.cash.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,9 +13,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * UserRecord is the domain model for all users that can access Imani Cash to transact.
@@ -97,12 +93,6 @@ public class UserRecord extends AuditableRecord  {
     @Column(name = "LastLogoutDate", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastLogoutDate;
-
-
-    // Tracks additional Property Services that this user has signed up for.
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userRecord")
-    private Set<UserPropertyService> userPropertyServices = new HashSet<>();
-
 
 
     public UserRecord() {
@@ -205,23 +195,6 @@ public class UserRecord extends AuditableRecord  {
         this.lastLogoutDate = lastLogoutDate;
     }
 
-    public Set<UserPropertyService> getUserPropertyServices() {
-        return ImmutableSet.copyOf(userPropertyServices);
-    }
-
-    public void addUserPropertyService(UserPropertyService userPropertyService) {
-        Assert.notNull(userPropertyService, "userPropertyService cannot be null");
-        userPropertyServices.add(userPropertyService);
-    }
-
-    public void addUserPropertyServices(List<UserPropertyService> userPropertyServiceList) {
-        Assert.notNull(userPropertyServiceList, "userPropuserPropertyServicesertyService cannot be null");
-        userPropertyServices.addAll(userPropertyServiceList);
-    }
-
-    public void setUserPropertyServices(Set<UserPropertyService> userPropertyServices) {
-        this.userPropertyServices = userPropertyServices;
-    }
 
     public void updateSafeFieldsWherePresent(UserRecord userRecordToCopy) {
         Assert.notNull(userRecordToCopy, "userRecordToCopy cannot be null");
@@ -360,16 +333,6 @@ public class UserRecord extends AuditableRecord  {
 
         public Builder lastLogoutDate(DateTime lastLogoutDate) {
             userRecord.lastLogoutDate = lastLogoutDate;
-            return this;
-        }
-
-        public Builder addUserPropertyService(UserPropertyService userPropertyService) {
-            userRecord.addUserPropertyService(userPropertyService);
-            return this;
-        }
-
-        public Builder addUserPropertyServices(List<UserPropertyService> userPropertyServiceList) {
-            userRecord.addUserPropertyServices(userPropertyServiceList);
             return this;
         }
 

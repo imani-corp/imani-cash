@@ -2,14 +2,15 @@ package com.imani.cash.domain.service.property.billing;
 
 import com.imani.cash.domain.contact.EmbeddedContactInfo;
 import com.imani.cash.domain.property.billing.PropertyService;
+import com.imani.cash.domain.property.rental.Property;
 import com.imani.cash.domain.property.rental.RentalAgreement;
-import com.imani.cash.domain.user.UserPropertyService;
 import com.imani.cash.domain.user.UserRecord;
+import com.imani.cash.domain.user.UserResidence;
+import com.imani.cash.domain.user.UserResidencePropertyService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,15 +20,32 @@ import java.util.List;
 public abstract class AbstractMonthlyRentalBillingTest {
 
 
-    protected UserRecord userRecord;
 
-    protected RentalAgreement rentalAgreement;
+    protected UserResidence userResidence;
 
-    protected List<UserPropertyService> userPropertyServices;
+    public static final Integer PROPERTY_NUM_DAYS_PAYMENT_LATE = 4;
+
+
+    protected List<UserResidencePropertyService> userResidencePropertyServices;
 
     @Before
     public void before() {
-        // Create mock PropertyService
+        // Create a RentalAgreement for this test session
+        RentalAgreement rentalAgreement = buildRentalAgreement();
+
+        // Create Mock user for these tests
+        UserRecord userRecord = buildUserRecord();
+
+        // Build mock property for this test
+        Property property = buildProperty();
+
+        userResidence = UserResidence.builder()
+                .userRecord(userRecord)
+                .property(property)
+                .rentalAgreement(rentalAgreement)
+                .build();
+
+        // Build and add PropertyServices to UserResidence
         PropertyService propertyService1 = PropertyService.builder()
                 .serviceName("Monthly Parking")
                 .serviceMonthlyCost(150.00)
@@ -40,39 +58,38 @@ public abstract class AbstractMonthlyRentalBillingTest {
                 .serviceActive(true)
                 .build();
 
-        // Create mock UserPropertyService
-        UserPropertyService userPropertyService1 = UserPropertyService.builder()
-                .propertyService(propertyService1)
-                .active(true)
+        userResidence.addPropertyService(propertyService1);
+        userResidence.addPropertyService(propertyService2);
+    }
+
+
+    private Property buildProperty() {
+        Property property = Property.builder()
+                .mthlyNumberOfDaysPaymentLate(PROPERTY_NUM_DAYS_PAYMENT_LATE)
                 .build();
+        return property;
+    }
 
-        UserPropertyService userPropertyService2 = UserPropertyService.builder()
-                .propertyService(propertyService2)
-                .active(true)
-                .build();
 
-        // mockout call to retrieve additional property services that the user has signed up for
-        userPropertyServices = new ArrayList<>();
-        userPropertyServices.add(userPropertyService1);
-        userPropertyServices.add(userPropertyService2);
-
-        // Create a RentalAgreement for this test session
-        rentalAgreement = RentalAgreement.builder()
+    private RentalAgreement buildRentalAgreement() {
+        RentalAgreement rentalAgreement = RentalAgreement.builder()
                 .agreementInEffect(true)
                 .monthlyRentalCost(1800.00)
                 .build();
+        return rentalAgreement;
+    }
 
-        // Create Mock user for these tests
+    private UserRecord buildUserRecord() {
         EmbeddedContactInfo embeddedContactInfo = EmbeddedContactInfo.builder()
                 .email("test.user@imani.com")
                 .build();
 
-        userRecord = UserRecord.builder()
+        UserRecord userRecord = UserRecord.builder()
                 .firstName("Test")
                 .lastName("User")
                 .embeddedContactInfo(embeddedContactInfo)
-                .addUserPropertyServices(userPropertyServices)
                 .build();
+        return userRecord;
     }
 
 }

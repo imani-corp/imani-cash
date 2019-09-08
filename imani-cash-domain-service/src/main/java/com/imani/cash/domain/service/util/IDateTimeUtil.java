@@ -10,4 +10,6 @@ public interface IDateTimeUtil {
 
     public DateTime getDateTimeAtStartOfMonth(DateTime dateTime);
 
+    public Integer getDaysBetweenDates(DateTime start, DateTime end);
+
 }

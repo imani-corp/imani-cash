@@ -1,7 +1,10 @@
 package com.imani.cash.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
+import com.imani.cash.domain.property.billing.PropertyService;
 import com.imani.cash.domain.property.rental.Apartment;
 import com.imani.cash.domain.property.rental.Property;
 import com.imani.cash.domain.property.rental.RentalAgreement;
@@ -9,8 +12,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author manyce400
@@ -43,6 +49,7 @@ public class UserResidence extends AuditableRecord {
     private Apartment apartment;
 
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RentalAgreementID", nullable = true)
     private RentalAgreement rentalAgreement;
@@ -51,6 +58,11 @@ public class UserResidence extends AuditableRecord {
     @Column(name="IsPrimaryResidence", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean primaryResidence;
+
+    // Tracks additional Property Services that this user has signed up for.
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userResidence")
+    private Set<UserResidencePropertyService> userResidencePropertyServices = new HashSet<>();
 
 
     public UserResidence() {
@@ -105,6 +117,21 @@ public class UserResidence extends AuditableRecord {
     public void setPrimaryResidence(boolean primaryResidence) {
         this.primaryResidence = primaryResidence;
     }
+
+    public Set<UserResidencePropertyService> getUserResidencePropertyServices() {
+        return ImmutableSet.copyOf(userResidencePropertyServices);
+    }
+
+    public void addPropertyService(PropertyService propertyService) {
+        Assert.notNull(propertyService, "propertyService cannot be null");
+        UserResidencePropertyService userResidencePropertyService = UserResidencePropertyService.builder()
+                .active(true)
+                .propertyService(propertyService)
+                .userResidence(this)
+                .build();
+        userResidencePropertyServices.add(userResidencePropertyService);
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -178,6 +205,11 @@ public class UserResidence extends AuditableRecord {
 
         public Builder rentalAgreement(RentalAgreement rentalAgreement) {
             userResidence.rentalAgreement = rentalAgreement;
+            return this;
+        }
+
+        public Builder propertyService(PropertyService propertyService) {
+            userResidence.addPropertyService(propertyService);
             return this;
         }
 
