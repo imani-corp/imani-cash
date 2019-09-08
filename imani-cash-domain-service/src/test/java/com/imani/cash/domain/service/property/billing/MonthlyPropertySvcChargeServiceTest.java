@@ -46,9 +46,16 @@ public class MonthlyPropertySvcChargeServiceTest extends AbstractMonthlyRentalBi
 
         // Verify property service explanation
         Assert.assertEquals(2, propertyServiceChargeExplainedList.get().size());
-        Assert.assertEquals("Monthly Parking", propertyServiceChargeExplainedList.get().get(0).getServiceName());
-        Assert.assertEquals(new Double(150.00), propertyServiceChargeExplainedList.get().get(0).getServiceMonthlyCost());
-        Assert.assertEquals("Monthly Laundry", propertyServiceChargeExplainedList.get().get(1).getServiceName());
-        Assert.assertEquals(new Double(50.00), propertyServiceChargeExplainedList.get().get(1).getServiceMonthlyCost());
+
+        propertyServiceChargeExplainedList.get().forEach(propertyServiceChargeExplained -> {
+            String serviceName = propertyServiceChargeExplained.getServiceName();
+            if(serviceName.equals("Monthly Parking")) {
+                Assert.assertEquals(new Double(150.00), propertyServiceChargeExplained.getServiceMonthlyCost());
+            } else {
+                Assert.assertEquals("Monthly Laundry", propertyServiceChargeExplained.getServiceName());
+                Assert.assertEquals(new Double(50.00), propertyServiceChargeExplained.getServiceMonthlyCost());
+            }
+        });
+
     }
 }
