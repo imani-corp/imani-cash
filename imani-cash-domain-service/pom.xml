@@ -114,6 +114,12 @@
             <artifactId>spring-data-solr</artifactId>
         </dependency>
 
+
+<!--        <dependency>-->
+<!--            <groupId>com.plaid</groupId>-->
+<!--            <artifactId>plaid-java</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
 
 

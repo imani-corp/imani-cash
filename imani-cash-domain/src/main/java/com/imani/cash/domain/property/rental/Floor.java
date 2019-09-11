@@ -73,6 +73,14 @@ public class Floor extends AuditableRecord {
         this.codeName = codeName;
     }
 
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
     public Set<Apartment> getApartments() {
         return ImmutableSet.copyOf(apartments);
     }

@@ -1,5 +1,6 @@
 package com.imani.cash.domain.payment;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.PropertyManager;
 import com.imani.cash.domain.serviceprovider.ServiceProvider;
@@ -16,6 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="ACHPaymentInfo")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ACHPaymentInfo extends AuditableRecord {
 
 
