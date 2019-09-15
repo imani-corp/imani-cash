@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,6 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="Bedroom")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Bedroom extends AuditableRecord {
 
 
@@ -25,7 +27,7 @@ public class Bedroom extends AuditableRecord {
 
     // We track the possiblity that individual bedrooms can be rented and generate income
     @Column(name="SquareFootage", nullable=true)
-    private Double squareFootage;
+    private Long squareFootage;
 
 
     // Identifies this ACH Bank Account as the primary account
@@ -62,11 +64,11 @@ public class Bedroom extends AuditableRecord {
         this.id = id;
     }
 
-    public Double getSquareFootage() {
+    public Long getSquareFootage() {
         return squareFootage;
     }
 
-    public void setSquareFootage(Double squareFootage) {
+    public void setSquareFootage(Long squareFootage) {
         this.squareFootage = squareFootage;
     }
 
@@ -142,5 +144,38 @@ public class Bedroom extends AuditableRecord {
                 .append("photoLocation", photoLocation)
                 .append("apartment", apartment)
                 .toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Bedroom bedroom = new Bedroom();
+
+        public Builder squareFootage(Long squareFootage) {
+            bedroom.squareFootage = squareFootage;
+            return this;
+        }
+
+        public Builder isMasterBedroom(boolean isMasterBedroom) {
+            bedroom.isMasterBedroom = isMasterBedroom;
+            return this;
+        }
+
+        public Builder photoLocation(String photoLocation) {
+            bedroom.photoLocation = photoLocation;
+            return this;
+        }
+
+        public Builder apartment(Apartment apartment) {
+            bedroom.apartment = apartment;
+            return this;
+        }
+
+        public Bedroom build() {
+            return bedroom;
+        }
     }
 }

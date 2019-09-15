@@ -1,16 +1,17 @@
 package com.imani.cash.domain.payment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
-import com.imani.cash.domain.property.PropertyManager;
-import com.imani.cash.domain.serviceprovider.ServiceProvider;
 import com.imani.cash.domain.user.UserRecord;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author manyce400
@@ -28,18 +29,43 @@ public class ACHPaymentInfo extends AuditableRecord {
     private Long id;
 
 
-    // Bank Routing Numbers should be hashed
-    @Column(name="RoutingNumber", nullable=true, length=100)
-    public String routingNumber;
+    // Stripe Bank Acct Token that can be used to generate ACH payments
+    @Column(name="StripeBankAcctToken", nullable=false, length=100)
+    public String stripeBankAcctToken;
 
 
-    // Bank Acct Numbers should be hashed
-    @Column(name="BankAcctNumber", nullable=true, length=100)
-    public String bankAcctNumber;
+    // Bank AcctID tracked in Plaid post verification and authorization using Link
+    @Column(name="PlaidAcctID", nullable=false, length=100)
+    public String plaidAcctID;
+
+
+    // Plaid Public Access token associated to the Item to which account is linked, required for all Plaid product integrations
+    @Column(name="PlaidAccessToken", nullable=false, length=300)
+    public String plaidAccessToken;
+
+
+    @Column(name="acctName", nullable=true, length=100)
+    public String acctName;
+
+
+    @Column(name="OfficialAcctName", nullable=true, length=250)
+    public String officialAcctName;
+
+    @Column(name="AcctSubType", nullable=true, length=50)
+    public String acctSubType;
+
+
+    @Column(name="AcctType", nullable=true, length=50)
+    public String acctType;
 
 
     @Column(name="FinancialInstitution", nullable=true, length=100)
     private String financialInstitution;
+
+    // Identifies this ACH Bank Account as the primary account
+    @Column(name="IsPrimary", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean isPrimary;
 
 
     // UserRecord that this Payment information belongs to
@@ -48,22 +74,9 @@ public class ACHPaymentInfo extends AuditableRecord {
     private UserRecord userRecord;
 
 
-    // PropertyManager that this Payment information belongs to
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PropertyManagerID", nullable = true)
-    private PropertyManager propertyManager;
-
-
-    // ServiceProvider that this Payment information belongs to.
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ServiceProviderID", nullable = true)
-    private ServiceProvider serviceProvider;
-
-
-    // Identifies this ACH Bank Account as the primary account
-    @Column(name="IsPrimary", nullable = true, columnDefinition = "TINYINT", length = 1)
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean isPrimary;
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "achPaymentInfo")
+    private Set<ACHPaymentInfoPlaidProduct> achPaymentInfoPlaidProducts = new HashSet<>();
 
 
 
@@ -79,20 +92,60 @@ public class ACHPaymentInfo extends AuditableRecord {
         this.id = id;
     }
 
-    public String getRoutingNumber() {
-        return routingNumber;
+    public String getStripeBankAcctToken() {
+        return stripeBankAcctToken;
     }
 
-    public void setRoutingNumber(String routingNumber) {
-        this.routingNumber = routingNumber;
+    public void setStripeBankAcctToken(String stripeBankAcctToken) {
+        this.stripeBankAcctToken = stripeBankAcctToken;
     }
 
-    public String getBankAcctNumber() {
-        return bankAcctNumber;
+    public String getPlaidAcctID() {
+        return plaidAcctID;
     }
 
-    public void setBankAcctNumber(String bankAcctNumber) {
-        this.bankAcctNumber = bankAcctNumber;
+    public void setPlaidAcctID(String plaidAcctID) {
+        this.plaidAcctID = plaidAcctID;
+    }
+
+    public String getPlaidAccessToken() {
+        return plaidAccessToken;
+    }
+
+    public void setPlaidAccessToken(String plaidAccessToken) {
+        this.plaidAccessToken = plaidAccessToken;
+    }
+
+    public String getAcctName() {
+        return acctName;
+    }
+
+    public void setAcctName(String acctName) {
+        this.acctName = acctName;
+    }
+
+    public String getOfficialAcctName() {
+        return officialAcctName;
+    }
+
+    public void setOfficialAcctName(String officialAcctName) {
+        this.officialAcctName = officialAcctName;
+    }
+
+    public String getAcctSubType() {
+        return acctSubType;
+    }
+
+    public void setAcctSubType(String acctSubType) {
+        this.acctSubType = acctSubType;
+    }
+
+    public String getAcctType() {
+        return acctType;
+    }
+
+    public void setAcctType(String acctType) {
+        this.acctType = acctType;
     }
 
     public String getFinancialInstitution() {
@@ -103,30 +156,6 @@ public class ACHPaymentInfo extends AuditableRecord {
         this.financialInstitution = financialInstitution;
     }
 
-    public UserRecord getUserRecord() {
-        return userRecord;
-    }
-
-    public void setUserRecord(UserRecord userRecord) {
-        this.userRecord = userRecord;
-    }
-
-    public PropertyManager getPropertyManager() {
-        return propertyManager;
-    }
-
-    public void setPropertyManager(PropertyManager propertyManager) {
-        this.propertyManager = propertyManager;
-    }
-
-    public ServiceProvider getServiceProvider() {
-        return serviceProvider;
-    }
-
-    public void setServiceProvider(ServiceProvider serviceProvider) {
-        this.serviceProvider = serviceProvider;
-    }
-
     public boolean isPrimary() {
         return isPrimary;
     }
@@ -135,52 +164,111 @@ public class ACHPaymentInfo extends AuditableRecord {
         isPrimary = primary;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ACHPaymentInfo that = (ACHPaymentInfo) o;
-
-        return new EqualsBuilder()
-                .append(isPrimary, that.isPrimary)
-                .append(id, that.id)
-                .append(routingNumber, that.routingNumber)
-                .append(bankAcctNumber, that.bankAcctNumber)
-                .append(financialInstitution, that.financialInstitution)
-                .append(userRecord, that.userRecord)
-                .append(propertyManager, that.propertyManager)
-                .append(serviceProvider, that.serviceProvider)
-                .isEquals();
+    public UserRecord getUserRecord() {
+        return userRecord;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(id)
-                .append(routingNumber)
-                .append(bankAcctNumber)
-                .append(financialInstitution)
-                .append(userRecord)
-                .append(propertyManager)
-                .append(serviceProvider)
-                .append(isPrimary)
-                .toHashCode();
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
+    }
+
+    public Set<ACHPaymentInfoPlaidProduct> getAchPaymentInfoPlaidProducts() {
+        return ImmutableSet.copyOf(achPaymentInfoPlaidProducts);
+    }
+
+    public void addPlaidProductE(PlaidProductE plaidProductE) {
+        Assert.notNull(plaidProductE, "PlaidProductE cannot be null");
+        ACHPaymentInfoPlaidProduct achPaymentInfoPlaidProduct = ACHPaymentInfoPlaidProduct.builder()
+                .plaidProductE(plaidProductE)
+                .achPaymentInfo(this)
+                .build();
+        achPaymentInfoPlaidProducts.add(achPaymentInfoPlaidProduct);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
-                .append("routingNumber", routingNumber)
-                .append("bankAcctNumber", bankAcctNumber)
+                .append("stripeBankAcctToken", stripeBankAcctToken)
+                .append("plaidAcctID", plaidAcctID)
+                .append("plaidAccessToken", plaidAccessToken)
+                .append("acctName", acctName)
+                .append("officialAcctName", officialAcctName)
+                .append("acctSubType", acctSubType)
+                .append("acctType", acctType)
                 .append("financialInstitution", financialInstitution)
-                .append("userRecord", userRecord)
-                .append("propertyManager", propertyManager)
-                .append("serviceProvider", serviceProvider)
                 .append("isPrimary", isPrimary)
+                .append("userRecord", userRecord)
+                .append("achPaymentInfoPlaidProducts", achPaymentInfoPlaidProducts)
                 .toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private ACHPaymentInfo achPaymentInfo = new ACHPaymentInfo();
+
+        public Builder stripeBankAcctToken(String stripeBankAcctToken) {
+            achPaymentInfo.stripeBankAcctToken = stripeBankAcctToken;
+            return this;
+        }
+
+        public Builder plaidAcctID(String plaidAcctID) {
+            achPaymentInfo.plaidAcctID = plaidAcctID;
+            return this;
+        }
+
+        public Builder plaidAccessToken(String plaidAccessToken) {
+            achPaymentInfo.plaidAccessToken = plaidAccessToken;
+            return this;
+        }
+
+        public Builder acctName(String acctName) {
+            achPaymentInfo.acctName = acctName;
+            return this;
+        }
+
+        public Builder officialAcctName(String officialAcctName) {
+            achPaymentInfo.officialAcctName = officialAcctName;
+            return this;
+        }
+
+        public Builder acctSubType(String acctSubType) {
+            achPaymentInfo.acctSubType = acctSubType;
+            return this;
+        }
+
+        public Builder acctType(String acctType) {
+            achPaymentInfo.acctType = acctType;
+            return this;
+        }
+
+        public Builder financialInstitution(String financialInstitution) {
+            achPaymentInfo.financialInstitution = financialInstitution;
+            return this;
+        }
+
+        public Builder isPrimary(boolean isPrimary) {
+            achPaymentInfo.isPrimary = isPrimary;
+            return this;
+        }
+
+        public Builder userRecord(UserRecord userRecord) {
+            achPaymentInfo.userRecord = userRecord;
+            return this;
+        }
+
+        public Builder plaidProductE(PlaidProductE plaidProductE) {
+            achPaymentInfo.addPlaidProductE(plaidProductE);
+            return this;
+        }
+
+        public ACHPaymentInfo build() {
+            return achPaymentInfo;
+        }
     }
 
 }

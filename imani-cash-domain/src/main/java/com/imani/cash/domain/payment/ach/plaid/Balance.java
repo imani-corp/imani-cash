@@ -1,9 +1,8 @@
-package com.imani.cash.domain.payment.ach;
+package com.imani.cash.domain.payment.ach.plaid;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -12,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author manyce400
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Balance {
 
 
@@ -23,6 +23,10 @@ public class Balance {
 
     @JsonProperty("iso_currency_code")
     private String currencyCode;
+
+    @JsonProperty("unofficial_currency_code")
+    private String unOfficialCurrency;
+
 
     public Balance() {
 
@@ -60,30 +64,12 @@ public class Balance {
         this.currencyCode = currencyCode;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Balance balance = (Balance) o;
-
-        return new EqualsBuilder()
-                .append(available, balance.available)
-                .append(current, balance.current)
-                .append(limit, balance.limit)
-                .append(currencyCode, balance.currencyCode)
-                .isEquals();
+    public String getUnOfficialCurrency() {
+        return unOfficialCurrency;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(available)
-                .append(current)
-                .append(limit)
-                .append(currencyCode)
-                .toHashCode();
+    public void setUnOfficialCurrency(String unOfficialCurrency) {
+        this.unOfficialCurrency = unOfficialCurrency;
     }
 
     @Override
@@ -93,6 +79,45 @@ public class Balance {
                 .append("current", current)
                 .append("limit", limit)
                 .append("currencyCode", currencyCode)
+                .append("unOfficialCurrency", unOfficialCurrency)
                 .toString();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Balance balance = new Balance();
+
+        public Builder available(Double available) {
+            balance.available = available;
+            return this;
+        }
+
+        public Builder current(Double current) {
+            balance.current = current;
+            return this;
+        }
+
+        public Builder limit(Double limit) {
+            balance.limit = limit;
+            return this;
+        }
+
+        public Builder currencyCode(String currencyCode) {
+            balance.currencyCode = currencyCode;
+            return this;
+        }
+
+        public Builder unOfficialCurrency(String unOfficialCurrency) {
+            balance.unOfficialCurrency = unOfficialCurrency;
+            return this;
+        }
+
+        public Balance build() {
+            return balance;
+        }
     }
 }

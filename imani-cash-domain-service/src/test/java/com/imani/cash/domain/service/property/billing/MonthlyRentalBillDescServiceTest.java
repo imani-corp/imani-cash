@@ -84,6 +84,5 @@ public class MonthlyRentalBillDescServiceTest extends AbstractMonthlyRentalBilli
             e.printStackTrace();
         }
     }
-    
 
 }

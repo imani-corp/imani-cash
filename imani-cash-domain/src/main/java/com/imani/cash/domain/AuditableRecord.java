@@ -27,7 +27,7 @@ public class AuditableRecord {
     @Column(name = "CreateDate", nullable = false, updatable = false)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
-    private DateTime createDate;
+    protected DateTime createDate;
 
 
     // For security reasons dont expose audit field values in JSON
@@ -35,7 +35,7 @@ public class AuditableRecord {
     @Column(name = "ModifyDate")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @LastModifiedDate
-    private DateTime modifyDate;
+    protected DateTime modifyDate;
 
 
     public DateTime getCreateDate() {

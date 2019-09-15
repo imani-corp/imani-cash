@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.geographical.Borough;
@@ -26,6 +27,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="Property", indexes = {@Index(name = "Property_Finder_IDX", columnList = "PropertyNumber, StreetName, ZipCode, BoroughID")})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Property extends AuditableRecord {
 
 

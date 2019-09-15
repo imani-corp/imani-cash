@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.PropertyManager;
 import com.imani.cash.domain.property.PropertyOwner;
@@ -18,6 +19,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="RentalAgreement")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RentalAgreement extends AuditableRecord {
 
 

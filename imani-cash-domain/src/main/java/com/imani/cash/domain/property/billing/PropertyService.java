@@ -5,6 +5,7 @@ import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.property.rental.Property;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
@@ -123,6 +124,11 @@ public class PropertyService extends AuditableRecord {
 
         public Builder property(Property property) {
             propertyService.property = property;
+            return this;
+        }
+
+        public Builder createDate(DateTime createDate) {
+            propertyService.createDate = createDate;
             return this;
         }
 

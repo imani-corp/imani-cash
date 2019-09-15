@@ -24,6 +24,9 @@ public class MonthlyRentalBillExplained {
 
     private Double amtPaid;
 
+    // Passed only when a client is making a payment.  Should never exceed the total amount due
+    private Double amtBeingPaid;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private DateTime rentalMonth;
 
@@ -62,6 +65,14 @@ public class MonthlyRentalBillExplained {
 
     public void setAmtPaid(Double amtPaid) {
         this.amtPaid = amtPaid;
+    }
+
+    public Double getAmtBeingPaid() {
+        return amtBeingPaid;
+    }
+
+    public void setAmtBeingPaid(Double amtBeingPaid) {
+        this.amtBeingPaid = amtBeingPaid;
     }
 
     public DateTime getRentalMonth() {
@@ -104,6 +115,7 @@ public class MonthlyRentalBillExplained {
                 .append("monthlyRentalCost", monthlyRentalCost)
                 .append("totalAmtDue", totalAmtDue)
                 .append("amtPaid", amtPaid)
+                .append("amtBeingPaid", amtBeingPaid)
                 .append("rentalMonth", rentalMonth)
                 .append("userResidence", userResidence)
                 .append("monthlyRentalFeeExplainedSet", monthlyRentalFeeExplainedSet)
@@ -132,6 +144,11 @@ public class MonthlyRentalBillExplained {
 
         public Builder amtPaid(Double amtPaid) {
             monthlyRentalBillExplained.amtPaid = amtPaid;
+            return this;
+        }
+
+        public Builder amtBeingPaid(Double amtBeingPaid) {
+            monthlyRentalBillExplained.amtBeingPaid = amtBeingPaid;
             return this;
         }
 

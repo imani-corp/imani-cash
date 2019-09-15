@@ -2,7 +2,6 @@ package com.imani.cash.domain.service.payment;
 
 import com.imani.cash.domain.payment.ACHPaymentInfo;
 import com.imani.cash.domain.service.security.AESEncryptionService;
-import com.imani.cash.domain.service.security.EncryptionException;
 import com.imani.cash.domain.service.security.IAESEncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,29 +28,29 @@ public class ACHPaymentInfoSecurityService implements IACHPaymentInfoSecuritySer
     public void execACHPaymentInfoEncryption(ACHPaymentInfo achPaymentInfo) {
         // Heads up:  Calling any of the encrypt/decrypt methods when String is already decrypted or encrypted will cause an exception to be thrown.
 
-        try {
-            String encryptedBankAcctNumber = iaesEncryptionService.encrypt(achPaymentInfo.getBankAcctNumber());
-            achPaymentInfo.setBankAcctNumber(encryptedBankAcctNumber);
-
-            String encryptedRoutingNumber = iaesEncryptionService.encrypt(achPaymentInfo.getRoutingNumber());
-            achPaymentInfo.setRoutingNumber(encryptedRoutingNumber);
-        } catch (EncryptionException e) {
-            throw new RuntimeException("Failed to encrypt ACHPaymentInfo", e);
-        }
+//        try {
+//            String encryptedBankAcctNumber = iaesEncryptionService.encrypt(achPaymentInfo.getBankAcctNumber());
+//            achPaymentInfo.setBankAcctNumber(encryptedBankAcctNumber);
+//
+//            String encryptedRoutingNumber = iaesEncryptionService.encrypt(achPaymentInfo.getRoutingNumber());
+//            achPaymentInfo.setRoutingNumber(encryptedRoutingNumber);
+//        } catch (EncryptionException e) {
+//            throw new RuntimeException("Failed to encrypt ACHPaymentInfo", e);
+//        }
 
     }
 
     @Override
     public void execACHPaymentInfoDecryption(ACHPaymentInfo achPaymentInfo) {
-        try {
-            String decryptedBankAcctNumber = iaesEncryptionService.decrypt(achPaymentInfo.getBankAcctNumber());
-            achPaymentInfo.setBankAcctNumber(decryptedBankAcctNumber);
-
-            String decryptedRoutingNumber = iaesEncryptionService.decrypt(achPaymentInfo.getRoutingNumber());
-            achPaymentInfo.setRoutingNumber(decryptedRoutingNumber);
-        } catch (EncryptionException e) {
-            throw new RuntimeException("Failed to encrypt ACHPaymentInfo", e);
-        }
+//        try {
+//            String decryptedBankAcctNumber = iaesEncryptionService.decrypt(achPaymentInfo.getBankAcctNumber());
+//            achPaymentInfo.setBankAcctNumber(decryptedBankAcctNumber);
+//
+//            String decryptedRoutingNumber = iaesEncryptionService.decrypt(achPaymentInfo.getRoutingNumber());
+//            achPaymentInfo.setRoutingNumber(decryptedRoutingNumber);
+//        } catch (EncryptionException e) {
+//            throw new RuntimeException("Failed to encrypt ACHPaymentInfo", e);
+//        }
     }
 
 

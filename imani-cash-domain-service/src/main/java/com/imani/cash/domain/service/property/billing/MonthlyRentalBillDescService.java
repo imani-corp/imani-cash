@@ -1,15 +1,13 @@
 package com.imani.cash.domain.service.property.billing;
 
-import com.imani.cash.domain.property.billing.MonthlyRentalBill;
-import com.imani.cash.domain.property.billing.MonthlyRentalBillExplained;
-import com.imani.cash.domain.property.billing.MonthlyRentalFeeExplained;
-import com.imani.cash.domain.property.billing.PropertyServiceChargeExplained;
+import com.imani.cash.domain.property.billing.*;
 import com.imani.cash.domain.property.billing.repository.IMonthlyRentalBillRepository;
 import com.imani.cash.domain.property.rental.RentalAgreement;
 import com.imani.cash.domain.service.util.DateTimeUtil;
 import com.imani.cash.domain.service.util.IDateTimeUtil;
 import com.imani.cash.domain.user.UserRecord;
 import com.imani.cash.domain.user.UserResidence;
+import com.imani.cash.domain.user.UserResidencePropertyService;
 import com.imani.cash.domain.user.repository.IUserResidenceRepository;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.joda.time.DateTime;
@@ -21,6 +19,7 @@ import org.springframework.util.Assert;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author manyce400
@@ -89,6 +88,7 @@ public class MonthlyRentalBillDescService implements IMonthlyRentalBillDescServi
 
                 // Get explanation and return
                 MonthlyRentalBillExplained monthlyRentalBillExplained = getMonthlyRentalBillExplained(userResidence, monthlyRentalFeeExplainedList, propertyServiceChargeExplainedList);
+                monthlyRentalBillExplained.setRentalMonth(dateTimeAtStartOfMonth);
 
                 LOGGER.debug("Saving generated new monthly rental bill: {}", monthlyRentalBill);
                 iMonthlyRentalBillRepository.save(monthlyRentalBill);
@@ -101,7 +101,28 @@ public class MonthlyRentalBillDescService implements IMonthlyRentalBillDescServi
         return Optional.empty();
     }
 
+    @Override
+    public Double calculateTotalAmountDue(MonthlyRentalBill monthlyRentalBill, Set<UserResidencePropertyService> userResidencePropertyServices) {
+        Assert.notNull(monthlyRentalBill, "monthlyRentalBill cannot be null");
+        Assert.notNull(userResidencePropertyServices, "userResidencePropertyServices cannot be null");
 
+
+        Sum sum = new Sum();
+        Double monthlyRentalCost = monthlyRentalBill.getRentalAgreement().getMonthlyRentalCost();
+
+        // Calculate the total from monthly rental fees
+        Set<MonthlyRentalBillFee> monthlyRentalBillFees = monthlyRentalBill.getMonthlyRentalBillFees();
+        monthlyRentalBillFees.forEach(monthlyRentalBillFee -> {
+            sum.increment(monthlyRentalBillFee.getMonthlyRentalFee().calculatePaymentWithFees(monthlyRentalCost));
+        });
+
+        // Calculate the total from Property Services passed as argument
+        userResidencePropertyServices.forEach(userResidencePropertyService -> {
+            sum.increment(userResidencePropertyService.getPropertyService().getServiceMonthlyCost());
+        });
+
+        return sum.getResult();
+    }
 
     MonthlyRentalBillExplained getMonthlyRentalBillExplained(UserResidence userResidence, Optional<List<MonthlyRentalFeeExplained>> monthlyRentalFeeExplainedList, Optional<List<PropertyServiceChargeExplained>> propertyServiceChargeExplainedList) {
         MonthlyRentalBillExplained monthlyRentalBillExplained = MonthlyRentalBillExplained.builder()

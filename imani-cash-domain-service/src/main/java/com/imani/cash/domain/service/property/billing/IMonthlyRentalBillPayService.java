@@ -1,6 +1,6 @@
 package com.imani.cash.domain.service.property.billing;
 
-import com.imani.cash.domain.property.billing.MonthlyRentalBill;
+import com.imani.cash.domain.property.billing.MonthlyRentalBillExplained;
 
 /**
  * @author manyce400
@@ -8,5 +8,5 @@ import com.imani.cash.domain.property.billing.MonthlyRentalBill;
 public interface IMonthlyRentalBillPayService {
 
 
-    public void payMonthylyRental(MonthlyRentalBill monthlyRentalBill);
+    public void payMonthylyRental(MonthlyRentalBillExplained monthlyRentalBillExplained);
 }

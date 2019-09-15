@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,6 +17,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="Floor")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Floor extends AuditableRecord {
 
 

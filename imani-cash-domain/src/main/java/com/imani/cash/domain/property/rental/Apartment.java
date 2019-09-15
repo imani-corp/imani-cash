@@ -1,5 +1,6 @@
 package com.imani.cash.domain.property.rental;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.collect.ImmutableSet;
 import com.imani.cash.domain.AuditableRecord;
 import com.imani.cash.domain.user.UserRecord;
@@ -18,6 +19,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name="Apartment")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Apartment extends AuditableRecord {
 
 
@@ -173,6 +175,11 @@ public class Apartment extends AuditableRecord {
 
         public Builder rentedByUser(UserRecord rentedByUser) {
             apartment.rentedByUser = rentedByUser;
+            return this;
+        }
+
+        public Builder bedroom(Bedroom bedroom) {
+            apartment.addToBedrooms(bedroom);
             return this;
         }
 

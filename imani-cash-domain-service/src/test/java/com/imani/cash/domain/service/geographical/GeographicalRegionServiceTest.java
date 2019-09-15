@@ -7,9 +7,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 /**
  * @author manyce400
  */
-//@RunWith(SpringRunner.class)
-//@DataJpaTest
-//@SpringBootTest(classes={Application.class})
 public class GeographicalRegionServiceTest {
 
 
