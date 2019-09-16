@@ -45,7 +45,7 @@ public class MonthlyRentalBillPayService implements IMonthlyRentalBillPayService
 
     @Transactional
     @Override
-    public void payMonthylyRental(MonthlyRentalBillExplained monthlyRentalBillExplained) {
+    public void payMonthlyRental(MonthlyRentalBillExplained monthlyRentalBillExplained) {
         Assert.notNull(monthlyRentalBillExplained, "monthlyRentalBillExplained cannot be null");
 
         UserResidence userResidence = monthlyRentalBillExplained.getUserResidence();
@@ -65,6 +65,7 @@ public class MonthlyRentalBillPayService implements IMonthlyRentalBillPayService
             if(canMakePaymentOnBill) {
                 // Now validate real-time using Plaid that this user has enough funds in their available account balance to make this payment and execute.
                 boolean hasAvailableBalanceForPayment = iPlaidAccountBalanceService.availableBalanceCoversPayment(userRecord, monthlyRentalBillExplained.getAmtBeingPaid());
+                System.out.println("hasAvailableBalanceForPayment = " + hasAvailableBalanceForPayment);
             }
         }
     }

@@ -8,5 +8,5 @@ import com.imani.cash.domain.property.billing.MonthlyRentalBillExplained;
 public interface IMonthlyRentalBillPayService {
 
 
-    public void payMonthylyRental(MonthlyRentalBillExplained monthlyRentalBillExplained);
+    public void payMonthlyRental(MonthlyRentalBillExplained monthlyRentalBillExplained);
 }
