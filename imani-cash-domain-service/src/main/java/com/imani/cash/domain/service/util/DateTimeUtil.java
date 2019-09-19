@@ -32,6 +32,14 @@ public class DateTimeUtil implements IDateTimeUtil {
     }
 
     @Override
+    public DateTime getDateTimeAtEndOfMonth(DateTime dateTime) {
+        Assert.notNull(dateTime, "DateTime cannot be null");
+        LOGGER.debug("Creating new date at end of month for dateTime: {}", dateTime);
+        DateTime endOfMonthDateTime = dateTime.dayOfMonth().withMaximumValue().withTimeAtStartOfDay();
+        return endOfMonthDateTime;
+    }
+
+    @Override
     public Integer getDaysBetweenDates(DateTime start, DateTime end) {
         Assert.notNull(start, "start cannot be null");
         Assert.notNull(end, "end cannot be null");

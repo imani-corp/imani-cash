@@ -1,5 +1,6 @@
 package com.imani.cash.domain.payment;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.imani.cash.domain.property.PropertyManager;
 import com.imani.cash.domain.user.UserRecord;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,6 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="RentalPaymentHistory")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RentalPaymentHistory {
 
 

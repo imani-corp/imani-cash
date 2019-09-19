@@ -106,14 +106,18 @@ public class MonthlyRentalBillDescService implements IMonthlyRentalBillDescServi
         Assert.notNull(monthlyRentalBill, "monthlyRentalBill cannot be null");
         Assert.notNull(userResidencePropertyServices, "userResidencePropertyServices cannot be null");
 
+        // Get the monthly rental this user is supposed to pay by their rental agreement
+        Double monthlyRentalCost = monthlyRentalBill.getRentalAgreement().getMonthlyRentalCost();
+        LOGGER.info("Calculating total monthly amount due on bill with monthly rental agreement amount:=> {}", monthlyRentalCost);
 
         Sum sum = new Sum();
-        Double monthlyRentalCost = monthlyRentalBill.getRentalAgreement().getMonthlyRentalCost();
+        sum.increment(monthlyRentalCost);
 
         // Calculate the total from monthly rental fees
         Set<MonthlyRentalBillFee> monthlyRentalBillFees = monthlyRentalBill.getMonthlyRentalBillFees();
         monthlyRentalBillFees.forEach(monthlyRentalBillFee -> {
-            sum.increment(monthlyRentalBillFee.getMonthlyRentalFee().calculatePaymentWithFees(monthlyRentalCost));
+            double paymentFees = monthlyRentalBillFee.getMonthlyRentalFee().calculatFeeCharge(monthlyRentalCost);
+            sum.increment(paymentFees);
         });
 
         // Calculate the total from Property Services passed as argument

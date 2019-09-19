@@ -3,6 +3,7 @@ package com.imani.cash.domain.service.property.billing;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imani.cash.domain.payment.FeePaymentChargeTypeE;
+import com.imani.cash.domain.property.billing.MonthlyRentalBill;
 import com.imani.cash.domain.property.billing.MonthlyRentalBillExplained;
 import com.imani.cash.domain.property.billing.MonthlyRentalFee;
 import com.imani.cash.domain.property.billing.RentalFeeTypeE;
@@ -10,7 +11,10 @@ import com.imani.cash.domain.property.billing.repository.IMonthlyRentalBillRepos
 import com.imani.cash.domain.property.billing.repository.IMonthlyRentalFeeRepository;
 import com.imani.cash.domain.service.mock.MockObjectMapper;
 import com.imani.cash.domain.service.util.DateTimeUtil;
+import com.imani.cash.domain.service.util.DateTimeUtilTest;
 import com.imani.cash.domain.user.repository.IUserResidenceRepository;
+import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +32,12 @@ import java.util.Optional;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MonthlyRentalBillDescServiceTest extends AbstractMonthlyRentalBillingTest {
-    
+
+
+
+    private DateTime rentalMonth;
+
+    private MonthlyRentalBill monthlyRentalBill;
     
     @Spy
     private DateTimeUtil iDateTimeUtil;
@@ -61,6 +70,15 @@ public class MonthlyRentalBillDescServiceTest extends AbstractMonthlyRentalBilli
         super.before();
         Mockito.when(iUserResidenceRepository.findUserResidence(Mockito.any())).thenReturn(userResidence);
         Mockito.when(iMonthlyRentalBillRepository.getUserMonthlyRentalBill(Mockito.any(), Mockito.any())).thenReturn(null);
+        
+        // Build mock MonthlyRentalBill
+        rentalMonth = DateTime.parse("2019-09-01 00:00:00", DateTimeUtilTest.DEFAULT_FORMATTER);
+        monthlyRentalBill = MonthlyRentalBill.builder()
+                .userResidence(userResidence)
+                .rentalAgreement(userResidence.getRentalAgreement())
+                .amountPaid(0.0)
+                .rentalMonth(rentalMonth)
+                .build();
 
         // Return a Late Fee
         MonthlyRentalFee lateRentalFee = MonthlyRentalFee.builder()
@@ -73,6 +91,35 @@ public class MonthlyRentalBillDescServiceTest extends AbstractMonthlyRentalBilli
 
     }
 
+    
+    @Test
+    public void testCalculateTotalAmountDue() {
+        // Rental agreement has an amount of $1,800.  Property services signed up for add up to $200 so total amount due should be $2,000
+        Double totalAmtDueWithFeesAndServiceCharge = monthlyRentalBillGenService.calculateTotalAmountDue(monthlyRentalBill, userResidence.getUserResidencePropertyServices());
+        Assert.assertEquals(new Double(2000), totalAmtDueWithFeesAndServiceCharge);
+
+        // Add a $20 rental late fee and verify total amount due
+        MonthlyRentalFee monthlyRentalFee = MonthlyRentalFee.builder()
+                .rentalFeeTypeE(RentalFeeTypeE.LATE_FEE)
+                .feePaymentChargeTypeE(FeePaymentChargeTypeE.FLAT_AMOUNT_FEE)
+                .optionalFlatAmount(20.00)
+                .build();
+        monthlyRentalBill.addMonthlyRentalFee(monthlyRentalFee);
+
+        totalAmtDueWithFeesAndServiceCharge = monthlyRentalBillGenService.calculateTotalAmountDue(monthlyRentalBill, userResidence.getUserResidencePropertyServices());
+        Assert.assertEquals(new Double(2020), totalAmtDueWithFeesAndServiceCharge);
+
+        // Add a second $40 rental late fee and verify total amount due
+        MonthlyRentalFee monthlyRentalFee2 = MonthlyRentalFee.builder()
+                .rentalFeeTypeE(RentalFeeTypeE.LATE_FEE)
+                .feePaymentChargeTypeE(FeePaymentChargeTypeE.FLAT_AMOUNT_FEE)
+                .optionalFlatAmount(40.00)
+                .build();
+        monthlyRentalBill.addMonthlyRentalFee(monthlyRentalFee2);
+
+        totalAmtDueWithFeesAndServiceCharge = monthlyRentalBillGenService.calculateTotalAmountDue(monthlyRentalBill, userResidence.getUserResidencePropertyServices());
+        Assert.assertEquals(new Double(2060), totalAmtDueWithFeesAndServiceCharge);
+    }
     
     @Test
     public void testGetCurrentMonthRentalBill() {

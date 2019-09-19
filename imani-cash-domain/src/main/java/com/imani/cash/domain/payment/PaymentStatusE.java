@@ -6,8 +6,14 @@ package com.imani.cash.domain.payment;
 public enum PaymentStatusE {
 
 
-    Rejected,
+    Pending,
 
-    Success
+    Success,
+
+    Failed,
+
+    InsufficientFunds,
+
+    CannotProcess
     ;
 }

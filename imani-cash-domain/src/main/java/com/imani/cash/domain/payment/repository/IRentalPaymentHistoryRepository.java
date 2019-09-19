@@ -16,10 +16,16 @@ import java.util.List;
 @Repository
 public interface IRentalPaymentHistoryRepository extends JpaRepository<RentalPaymentHistory, Long> {
 
-    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentDate >=?2")
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentDate =?2")
     public List<RentalPaymentHistory> findUserRentalPaymentHistoryByDate(UserRecord userRecord, DateTime paymentDate);
 
-    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE >=?2 and rentalPaymentHistory.embeddedPayment.paymentDate >=?3")
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentDate >=?2  and rentalPaymentHistory.embeddedPayment.paymentDate <=?3")
+    public List<RentalPaymentHistory> findUserRentalPaymentHistoryByDateRange(UserRecord userRecord, DateTime startDate, DateTime endDate);
+
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE =?2 and rentalPaymentHistory.embeddedPayment.paymentDate =?3")
     public List<RentalPaymentHistory> findUserRentalPaymentHistoryByStatusAndDate(UserRecord userRecord, PaymentStatusE paymentStatusE, DateTime paymentDate);
+
+    @Query("Select  rentalPaymentHistory From RentalPaymentHistory rentalPaymentHistory Where rentalPaymentHistory.userRecord =?1 and rentalPaymentHistory.embeddedPayment.paymentStatusE =?2 and rentalPaymentHistory.embeddedPayment.paymentDate >=?3 and rentalPaymentHistory.embeddedPayment.paymentDate <=?4")
+    public List<RentalPaymentHistory> findUserRentalPaymentHistoryByStatusAndDateRange(UserRecord userRecord, PaymentStatusE paymentStatusE, DateTime startDate, DateTime endDate);
 
 }

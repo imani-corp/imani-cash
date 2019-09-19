@@ -25,11 +25,15 @@ public class DateTimeUtilTest {
     @Test
     public void testGetDateTimeAtStartOfMonth() {
         DateTime dateTime = dateTimeUtil.getDateTimeAtStartOfMonth(DateTime.parse("2019-09-03 09:00:00", DEFAULT_FORMATTER));
-
-        // Verify that date has been reset to the start of month
         String dateTimeAtStartOfMonth = DEFAULT_FORMATTER.print(dateTime);
         Assert.assertEquals("2019-09-01 00:00:00", dateTimeAtStartOfMonth);
-        System.out.println("dateTimeAtStartOfMonth = " + dateTimeAtStartOfMonth);
+    }
+    
+    @Test
+    public void testGetDateTimeAtEndOfMonth() {
+        DateTime dateTime = dateTimeUtil.getDateTimeAtEndOfMonth(DateTime.parse("2019-09-03 09:00:00", DEFAULT_FORMATTER));
+        String dateTimeAtEndOfMonth = DEFAULT_FORMATTER.print(dateTime);
+        Assert.assertEquals("2019-09-30 00:00:00", dateTimeAtEndOfMonth);
     }
 
     @Test

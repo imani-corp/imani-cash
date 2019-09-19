@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 /**
  * Tracks Bank account balances using Plaid integration model.
@@ -70,6 +71,12 @@ public class Balance {
 
     public void setUnOfficialCurrency(String unOfficialCurrency) {
         this.unOfficialCurrency = unOfficialCurrency;
+    }
+
+    public boolean hasAvailableBalanceForPayment(Double paymentAmount) {
+        Assert.notNull(paymentAmount, "paymentAmount cannot be null");
+        Assert.isTrue(paymentAmount.doubleValue() > 0, "paymentAmount cannot be 0");
+        return available.doubleValue() > paymentAmount.doubleValue();
     }
 
     @Override
