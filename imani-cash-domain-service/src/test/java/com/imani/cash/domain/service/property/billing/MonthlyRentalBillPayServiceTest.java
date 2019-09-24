@@ -1,8 +1,11 @@
 package com.imani.cash.domain.service.property.billing;
 
+import com.imani.cash.domain.payment.PaymentStatusE;
+import com.imani.cash.domain.payment.ach.plaid.Balance;
 import com.imani.cash.domain.payment.repository.IACHPaymentInfoRepository;
 import com.imani.cash.domain.property.billing.MonthlyRentalBill;
 import com.imani.cash.domain.property.billing.MonthlyRentalBillExplained;
+import com.imani.cash.domain.property.billing.RentalBillPayResult;
 import com.imani.cash.domain.property.billing.repository.IMonthlyRentalBillRepository;
 import com.imani.cash.domain.service.payment.IRentalPaymentHistoryService;
 import com.imani.cash.domain.service.payment.ach.plaid.IPlaidAccountBalanceService;
@@ -17,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 /**
  * @author manyce400
@@ -110,15 +115,22 @@ public class MonthlyRentalBillPayServiceTest extends AbstractMonthlyRentalBillin
                 .userResidence(userResidence)
                 .build();
 
+        // Build mock balance for balance check call
+        Balance balance = Balance.builder()
+                .available(500.00)
+                .build();
+
         // Mockout dependency calls
         Mockito.when(iRentalPaymentHistoryService.hasPendingUserRentalPaymentForCurrentMonth(userResidence.getUserRecord())).thenReturn(false);
         Mockito.when(iMonthlyRentalBillRepository.getUserMonthlyRentalBill(Mockito.any(), Mockito.any())).thenReturn(monthlyRentalBill);
         Mockito.when( iUserRecordRepository.findByUserEmail(Mockito.any())).thenReturn(userResidence.getUserRecord());
         Mockito.when(iMonthlyRentalBillDescService.calculateTotalAmountDue(Mockito.any(), Mockito.any())).thenReturn(2000.00);
-        Mockito.when(iPlaidAccountBalanceService.availableBalanceCoversPayment(userResidence.getUserRecord(), new Double(2000.00))).thenReturn(true);
+        Mockito.when(iPlaidAccountBalanceService.getACHPaymentInfoBalances(userResidence.getUserRecord())).thenReturn(Optional.of(balance));
 
-        // Invoke payment to see if succesful
-//        monthlyRentalBillPayService.payMonthlyRental(monthlyRentalBillExplained);
+        // Invoke payment.  User is making payment in full of $2,000 however the available balance on their account is only $500 so we expect that this payment should be blocked.
+        RentalBillPayResult rentalBillPayResult = monthlyRentalBillPayService.payMonthlyRental(monthlyRentalBillExplained);
+        Assert.assertEquals(PaymentStatusE.InsufficientFunds, rentalBillPayResult.getPaymentStatusE());
+        Assert.assertTrue(rentalBillPayResult.getPaymentMessage().contains("Insufficient Available Funds"));
     }
 
 }

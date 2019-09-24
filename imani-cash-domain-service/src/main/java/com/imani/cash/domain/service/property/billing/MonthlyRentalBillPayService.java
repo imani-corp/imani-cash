@@ -65,13 +65,16 @@ public class MonthlyRentalBillPayService implements IMonthlyRentalBillPayService
         UserResidence userResidence = monthlyRentalBillExplained.getUserResidence();
         UserRecord userRecord = userResidence.getUserRecord();
 
-        // IF there are any pending payments that have not yet posted for this current month then dont allow the user to submit a new payment
-        if(iRentalPaymentHistoryService.hasPendingUserRentalPaymentForCurrentMonth(userRecord)) {
-            LOGGER.warn("User: {} already has a pending payment for current month.  Payment should post before new payments can be submitted", userRecord.getEmbeddedContactInfo().getEmail());
-        }
-
         // Find the current user's monthly rental bill
         MonthlyRentalBill jpaMonthlyRentalBill = iMonthlyRentalBillRepository.getUserMonthlyRentalBill(userRecord, monthlyRentalBillExplained.getRentalMonth());
+
+        // IF there are any pending payments that have not yet posted for this current month then dont allow the user to submit a new payment
+        if(iRentalPaymentHistoryService.hasPendingUserRentalPaymentForCurrentMonth(userRecord)) {
+            LOGGER.warn("User: {} already has pending payment for current month.  Payment should post before new payments can be submitted", userRecord.getEmbeddedContactInfo().getEmail());
+            return getRentalBillPayResultOnPendingPayments(jpaMonthlyRentalBill, monthlyRentalBillExplained);
+        }
+
+
         if (jpaMonthlyRentalBill != null && !jpaMonthlyRentalBill.isBillClosed()) {
             // Refresh all the user details from persistent store
             UserRecord jpaUserRecord = iUserRecordRepository.findByUserEmail(userRecord.getEmbeddedContactInfo().getEmail());
@@ -125,6 +128,17 @@ public class MonthlyRentalBillPayService implements IMonthlyRentalBillPayService
        return sum.getResult();
     }
 
+    RentalBillPayResult getRentalBillPayResultOnPendingPayments(MonthlyRentalBill jpaMonthlyRentalBill, MonthlyRentalBillExplained monthlyRentalBillExplained) {
+        UserRecord userRecord = monthlyRentalBillExplained.getUserResidence().getUserRecord();
+        LOGGER.warn("Cannot process payment. Pending payments found for User:=> {} and RentalMonth:=> {}", userRecord.getEmbeddedContactInfo().getEmail(), monthlyRentalBillExplained.getRentalMonth());
+        RentalBillPayResult rentalBillPayResult = RentalBillPayResult.builder()
+                .paymentStatusE(PaymentStatusE.CannotProcess)
+                .paymentMessage("Cannot process payment.  You currently have a pending payment which has not yet posted.  Payments can be made after pending payments have cleared.")
+                .monthlyRentalBillExplained(monthlyRentalBillExplained)
+                .build();
+
+        return rentalBillPayResult;
+    }
 
     RentalBillPayResult getRentalBillPayResultOnIncorrectBill(MonthlyRentalBill jpaMonthlyRentalBill, MonthlyRentalBillExplained monthlyRentalBillExplained) {
         UserRecord userRecord = monthlyRentalBillExplained.getUserResidence().getUserRecord();

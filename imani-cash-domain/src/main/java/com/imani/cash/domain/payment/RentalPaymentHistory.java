@@ -1,10 +1,8 @@
 package com.imani.cash.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.imani.cash.domain.property.PropertyManager;
+import com.imani.cash.domain.property.billing.MonthlyRentalBill;
 import com.imani.cash.domain.user.UserRecord;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -24,27 +22,28 @@ public class RentalPaymentHistory {
     private Long id;
 
 
+    // Information about the payment made.
+    @Embedded
+    private EmbeddedPayment embeddedPayment;
+
+
     // Tracks the user responsible for making the payment
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "UserRecordID", nullable = false)
     private UserRecord userRecord;
 
 
-    // Tracks the PropertyManager that the payment was made to
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "PropertyManagerID", nullable = false)
-    private PropertyManager propertyManager;
-
-
     // Tracks the Bank Account that the payment was made from.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ACHPaymentInfoID", nullable = true)
-    private ACHPaymentInfo paymentBankAccount;
+    private ACHPaymentInfo achPaymentInfo;
 
 
-    // Information about the payment made.
-    @Embedded
-    private EmbeddedPayment embeddedPayment;
+    // Tracks the MonthlyRentalBill for which payment was made.
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MonthlyRentalBillID", nullable = true)
+    private MonthlyRentalBill monthlyRentalBill;
+
 
     public RentalPaymentHistory() {
 
@@ -58,30 +57,6 @@ public class RentalPaymentHistory {
         this.id = id;
     }
 
-    public UserRecord getUserRecord() {
-        return userRecord;
-    }
-
-    public void setUserRecord(UserRecord userRecord) {
-        this.userRecord = userRecord;
-    }
-
-    public PropertyManager getPropertyManager() {
-        return propertyManager;
-    }
-
-    public void setPropertyManager(PropertyManager propertyManager) {
-        this.propertyManager = propertyManager;
-    }
-
-    public ACHPaymentInfo getPaymentBankAccount() {
-        return paymentBankAccount;
-    }
-
-    public void setPaymentBankAccount(ACHPaymentInfo paymentBankAccount) {
-        this.paymentBankAccount = paymentBankAccount;
-    }
-
     public EmbeddedPayment getEmbeddedPayment() {
         return embeddedPayment;
     }
@@ -90,42 +65,72 @@ public class RentalPaymentHistory {
         this.embeddedPayment = embeddedPayment;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RentalPaymentHistory that = (RentalPaymentHistory) o;
-
-        return new EqualsBuilder()
-                .append(id, that.id)
-                .append(userRecord, that.userRecord)
-                .append(propertyManager, that.propertyManager)
-                .append(paymentBankAccount, that.paymentBankAccount)
-                .append(embeddedPayment, that.embeddedPayment)
-                .isEquals();
+    public UserRecord getUserRecord() {
+        return userRecord;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(id)
-                .append(userRecord)
-                .append(propertyManager)
-                .append(paymentBankAccount)
-                .append(embeddedPayment)
-                .toHashCode();
+    public void setUserRecord(UserRecord userRecord) {
+        this.userRecord = userRecord;
+    }
+
+    public ACHPaymentInfo getAchPaymentInfo() {
+        return achPaymentInfo;
+    }
+
+    public void setAchPaymentInfo(ACHPaymentInfo achPaymentInfo) {
+        this.achPaymentInfo = achPaymentInfo;
+    }
+
+    public MonthlyRentalBill getMonthlyRentalBill() {
+        return monthlyRentalBill;
+    }
+
+    public void setMonthlyRentalBill(MonthlyRentalBill monthlyRentalBill) {
+        this.monthlyRentalBill = monthlyRentalBill;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("id", id)
-                .append("userRecord", userRecord)
-                .append("propertyManager", propertyManager)
-                .append("paymentBankAccount", paymentBankAccount)
                 .append("embeddedPayment", embeddedPayment)
+                .append("userRecord", userRecord)
+                .append("achPaymentInfo", achPaymentInfo)
+                .append("monthlyRentalBill", monthlyRentalBill)
                 .toString();
+    }
+
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private RentalPaymentHistory rentalPaymentHistory = new RentalPaymentHistory();
+
+        public Builder embeddedPayment(EmbeddedPayment embeddedPayment) {
+            rentalPaymentHistory.embeddedPayment = embeddedPayment;
+            return this;
+        }
+
+        public Builder userRecord(UserRecord userRecord) {
+            rentalPaymentHistory.userRecord = userRecord;
+            return this;
+        }
+
+        public Builder achPaymentInfo(ACHPaymentInfo achPaymentInfo) {
+            rentalPaymentHistory.achPaymentInfo = achPaymentInfo;
+            return this;
+        }
+
+        public Builder monthlyRentalBill(MonthlyRentalBill monthlyRentalBill) {
+            rentalPaymentHistory.monthlyRentalBill = monthlyRentalBill;
+            return this;
+        }
+
+        public RentalPaymentHistory build() {
+            return rentalPaymentHistory;
+        }
     }
 }
