@@ -57,7 +57,7 @@ public class PlaidAPIExecMetric {
 
 
     // DateTime that the Plaid API invocation result was returned.  This will be very useful in identifying any latency.
-    @Column(name = "ApiInvocationStartDate", nullable = true)
+    @Column(name = "ApiInvocationEndDate", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @CreatedDate
     private DateTime apiInvocationEndDate;

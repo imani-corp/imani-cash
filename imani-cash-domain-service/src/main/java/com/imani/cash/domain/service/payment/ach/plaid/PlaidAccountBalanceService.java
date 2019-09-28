@@ -7,9 +7,11 @@ import com.imani.cash.domain.payment.ach.plaid.Balance;
 import com.imani.cash.domain.payment.ach.plaid.BankAccount;
 import com.imani.cash.domain.payment.ach.plaid.BankAccountList;
 import com.imani.cash.domain.payment.repository.IACHPaymentInfoRepository;
+import com.imani.cash.domain.service.rest.RestTemplateConfigurator;
 import com.imani.cash.domain.user.UserRecord;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,6 +33,7 @@ public class PlaidAccountBalanceService implements IPlaidAccountBalanceService {
     private ObjectMapper mapper;
 
     @Autowired
+    @Qualifier(RestTemplateConfigurator.SERVICE_REST_TEMPLATE)
     private RestTemplate restTemplate;
 
     @Autowired

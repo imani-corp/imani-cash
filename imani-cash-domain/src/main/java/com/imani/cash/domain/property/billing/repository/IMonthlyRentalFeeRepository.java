@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface IMonthlyRentalFeeRepository extends JpaRepository<MonthlyRentalFee, Long> {
 
 
-    @Query("Select monthlyRentalFee From MonthlyRentalFee monthlyRentalFee Where monthlyRentalFee.property = ?1 and monthlyRentalBill.rentalFeeTypeE = ?2")
+    @Query("Select monthlyRentalFee From MonthlyRentalFee monthlyRentalFee Where monthlyRentalFee.property = ?1 and monthlyRentalFee.rentalFeeTypeE = ?2")
     public MonthlyRentalFee findPropertyMonthlyRentalFeeByType(Property property, RentalFeeTypeE rentalFeeTypeE);
 
 }

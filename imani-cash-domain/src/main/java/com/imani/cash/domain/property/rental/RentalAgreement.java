@@ -88,7 +88,7 @@ public class RentalAgreement extends AuditableRecord {
 
 
     // Tracks this RentalAgreement is in effect, note that a termination date should always be set when this field gets set
-    @Column(name="TenantAcceptedAgreement", nullable = true, columnDefinition = "TINYINT", length = 1)
+    @Column(name="AgreementInEffect", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean agreementInEffect;
 

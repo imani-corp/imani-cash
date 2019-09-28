@@ -17,13 +17,13 @@ public interface IUserPropertyServiceRepository extends JpaRepository<UserReside
     /**
      * Find and return all PropertyService that this user has signed up for.
      */
-    @Query("Select userPropertyService From UserResidencePropertyService userPropertyService Where userPropertyService.userRecord = ?1")
+    @Query("Select userPropertyService From UserResidencePropertyService userPropertyService Where userPropertyService.userResidence.userRecord = ?1")
     public List<UserResidencePropertyService> findAllUserPropertyService(UserRecord userRecord);
 
 
     /**
      * Find and return all PropertyService that this user has signed up for.
      */
-    @Query("Select userPropertyService From UserResidencePropertyService userPropertyService Where userPropertyService.userRecord = ?1 and userPropertyService.active = true")
+    @Query("Select userPropertyService From UserResidencePropertyService userPropertyService Where userPropertyService.userResidence.userRecord = ?1 and userPropertyService.active = true")
     public List<UserResidencePropertyService> findAllActiveUserPropertyService(UserRecord userRecord);
 }
