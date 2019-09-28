@@ -29,7 +29,7 @@ public class OneWayClearTextEncryption implements IOneWayClearTextEncryption {
 
 //    public static void main(String[] args) {
 //        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//        String result = encoder.encode("boss");
+//        String result = encoder.encode("BillPayNodeClient8909!#");
 //        System.out.println("result = " + result);
 //    }
 
