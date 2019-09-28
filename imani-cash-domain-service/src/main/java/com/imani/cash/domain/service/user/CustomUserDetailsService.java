@@ -1,6 +1,7 @@
 package com.imani.cash.domain.service.user;
 
 import com.imani.cash.domain.user.UserRecord;
+import com.imani.cash.domain.user.UserRecordTypeE;
 import com.imani.cash.domain.user.repository.IUserRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Functionality to retrieve and verify API User login credentials as part of generating JWT Token.
+ *
+ * @author manyce400
+ */
 @Service(CustomUserDetailsService.SPRING_BEAN)
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -28,7 +34,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserRecord userRecord = iUserRecordRepository.findByUserEmail(userName);
         LOGGER.debug("UserRecord found: {}", userRecord);
 
-        if(userRecord != null) {
+        // This implementation will only allow APIUser to login
+        if(userRecord != null && userRecord.getUserRecordTypeE() == UserRecordTypeE.APIUser) {
             JwtUserDetails userDetails = new JwtUserDetails(userRecord);
             return userDetails;
         }
