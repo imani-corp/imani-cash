@@ -12,6 +12,8 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 
 /**
+ * Captures metric on invoking Plaid API's.
+ *
  * @author manyce400
  */
 @Entity

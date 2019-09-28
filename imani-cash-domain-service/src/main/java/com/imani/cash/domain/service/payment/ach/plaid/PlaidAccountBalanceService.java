@@ -1,6 +1,5 @@
 package com.imani.cash.domain.service.payment.ach.plaid;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imani.cash.domain.payment.ACHPaymentInfo;
 import com.imani.cash.domain.payment.ach.plaid.ACHInfoRequestObj;
@@ -9,13 +8,13 @@ import com.imani.cash.domain.payment.ach.plaid.BankAccount;
 import com.imani.cash.domain.payment.ach.plaid.BankAccountList;
 import com.imani.cash.domain.payment.repository.IACHPaymentInfoRepository;
 import com.imani.cash.domain.user.UserRecord;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -36,6 +35,9 @@ public class PlaidAccountBalanceService implements IPlaidAccountBalanceService {
 
     @Autowired
     private IACHPaymentInfoRepository iachPaymentInfoRepository;
+
+    @Autowired
+    private IPlaidAPIExecMetricBuilderService iPlaidAPIExecMetricBuilderService;
 
 
     public static final String SPRING_BEAN = "com.imani.cash.domain.service.payment.ach.plaid.PlaidAccountBalanceService";
@@ -69,18 +71,27 @@ public class PlaidAccountBalanceService implements IPlaidAccountBalanceService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+        DateTime apiInvocationStartDate = null;
+        DateTime apiInvocationEndDate = null;
+
         try {
             String jsonRequest = mapper.writeValueAsString(achInfoRequestObj);
             HttpEntity<String> request = new HttpEntity<>(jsonRequest, headers);
 
-            // We expect only 1 bank account back in the list returned
+            apiInvocationStartDate = DateTime.now();
             BankAccountList bankAccountList = restTemplate.postForObject("https://sandbox.plaid.com/accounts/balance/get", request, BankAccountList.class);
+            apiInvocationEndDate = DateTime.now();
+
+            // Capture and record metrics for succesful API call.
+            iPlaidAPIExecMetricBuilderService.buildBalancePlaidAPIExecMetricOnSuccess(achPaymentInfo.getUserRecord(), apiInvocationStartDate, apiInvocationEndDate);
+
+            // We expect only 1 bank account back in the list returned always return first in the list
             BankAccount bankAccount = bankAccountList.getAccounts().get(0);
             return Optional.of(bankAccount.getBalances());
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Failed to generate JSON Request", e);
-        } catch (RestClientException e) {
-            LOGGER.error("Exception occurred while retrieving account balances from Plaid endpoint", e);
+        } catch (Exception e) {
+            // Capture and record metrics for succesful API call.
+            LOGGER.error("Failed to execute Plaid API balance call", e);
+            iPlaidAPIExecMetricBuilderService.buildBalancePlaidAPIExecMetricOnFailure(achPaymentInfo.getUserRecord(), e.getMessage(), apiInvocationStartDate, apiInvocationEndDate);
         }
         
         return Optional.empty();
