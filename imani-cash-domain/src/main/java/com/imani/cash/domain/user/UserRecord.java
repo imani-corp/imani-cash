@@ -72,11 +72,15 @@ public class UserRecord extends AuditableRecord  {
 
 
     // IF set to true then user is not allowed to access QPalX application
-    // For security reasons, this field will not be returned in JSON of this object.
-    @JsonIgnore
     @Column(name="AccountLocked", nullable = true, columnDefinition = "TINYINT", length = 1)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean accountLocked;
+
+
+    // Only users that have accepted terms and conditions should be allowed to use the platform.  Date of acceptance will be create date
+    @Column(name="AcceptedTermsAndConditions", nullable = false, columnDefinition = "TINYINT", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean acceptedTermsAndConditions;
 
 
     // Track and update the last time this user was logged in to our system
@@ -179,6 +183,14 @@ public class UserRecord extends AuditableRecord  {
         this.accountLocked = accountLocked;
     }
 
+    public boolean isAcceptedTermsAndConditions() {
+        return acceptedTermsAndConditions;
+    }
+
+    public void setAcceptedTermsAndConditions(boolean acceptedTermsAndConditions) {
+        this.acceptedTermsAndConditions = acceptedTermsAndConditions;
+    }
+
     public DateTime getLastLoginDate() {
         return lastLoginDate;
     }
@@ -225,6 +237,7 @@ public class UserRecord extends AuditableRecord  {
                 .append(loggedIn, that.loggedIn)
                 .append(resetPassword, that.resetPassword)
                 .append(accountLocked, that.accountLocked)
+                .append(acceptedTermsAndConditions, that.acceptedTermsAndConditions)
                 .append(id, that.id)
                 .append(firstName, that.firstName)
                 .append(lastName, that.lastName)
@@ -250,6 +263,7 @@ public class UserRecord extends AuditableRecord  {
                 .append(loggedIn)
                 .append(resetPassword)
                 .append(accountLocked)
+                .append(acceptedTermsAndConditions)
                 .append(lastLoginDate)
                 .append(lastLogoutDate)
                 .toHashCode();
@@ -268,6 +282,7 @@ public class UserRecord extends AuditableRecord  {
                 .append("loggedIn", loggedIn)
                 .append("resetPassword", resetPassword)
                 .append("accountLocked", accountLocked)
+                .append("acceptedTermsAndConditions", acceptedTermsAndConditions)
                 .append("lastLoginDate", lastLoginDate)
                 .append("lastLogoutDate", lastLogoutDate)
                 .toString();
@@ -323,6 +338,11 @@ public class UserRecord extends AuditableRecord  {
 
         public Builder accountLocked(boolean accountLocked) {
             userRecord.accountLocked = accountLocked;
+            return this;
+        }
+
+        public Builder acceptedTermsAndConditions(boolean acceptedTermsAndConditions) {
+            userRecord.acceptedTermsAndConditions = acceptedTermsAndConditions;
             return this;
         }
 
